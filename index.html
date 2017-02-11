@@ -9,11 +9,14 @@
     </head>
     <body>
         <h1 id="header"></h1>
-        <form onsubmit="setTeamInfo()">
-            <input id="teamNumber" type="number">
-            <input id="teamSct" type="number">
-            <input type="submit"><br/>
+        <form id="teamInfoForm" onsubmit="setTeamInfo(); return false;">
+            <!--<input id="teamNumber" type="number"><br/>
+            <input id="teamSct" type="number"><br/>-->
+            <button id="refreshUI" onclick="setUI(); return false;">Refresh UI</button>
+            <input id="submitButton" type="submit"><br/>
+            <span class="lable"></span>
+            <input id="number" class="field" type="number" onchange="getTeamInfo(); return false;"><br/>
         </form>
-        <button onclick="setHeader()">Hello</button>
+        <!--<button onclick="setHeader()">Hello</button>-->
     </body>
 </html>
