@@ -1,29 +1,37 @@
 function Team(number, sct_score, score, test) {
-    this.number = number;
-    this.sct_score = sct_score;
-    this.score = score;
-    this.test = test;
+    this.number = number || 0;
+    this.sct_score = sct_score || 0;
+    this.score = score || 0;
+    this.test = test || 0;
 }
 function setUI(obj) {
-    if (obj == undefined) {
-        obj = new Team();
-    }
+    obj = obj || new Team();
+    
+    //Creates UI elements inside a form
     for (var key in obj) {
-        if (key != Object.keys(obj)[0]) {
-            if (team.hasOwnProperty(key)) {
+        if (key != Object.keys(obj)[0]) {//Ignores the first value of obj
+            if (obj.hasOwnProperty(key)) {
                 if (!$("#" + key).length) {
-                    //CREATE NEW UI
-                    var elmt = $("<span class='lable'>"+key+": </span><input id='"+key+"'  class='field' type='number'><br/>");
-                    $("#teamInfoForm").append(elmt);
+                    //Create UI element
+                    var elmt = $("<span class='lable'>"+key+": </span><input id='"+key+"'  class='field'><br/>");
+                    $("form").append(elmt);
                 }
-                //REFRESH UI
-                $("#"+key).val(team[key]);
+                //Refresh UI element
+                $("#"+key).val(obj[key]);
             }
+        }
+    }
+}
+function getUI(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            obj[key] = $("#"+key).val();
         }
     }
 }
 function setTeamInfo () {
     var teamNumber = $("#number").val();
+    getUI(team);
     $.ajax({
         url : 'php/setTeamInfo.php?q=' + teamNumber,
         type : 'POST',
@@ -50,8 +58,8 @@ function getTeamInfo () {
     });
 }
 
-var team = new Team(4931);
-alert(JSON.stringify(team));
+var team = new Team();
+//alert(JSON.stringify(team));
 
 function setHeader() {
     document.getElementById("header").innerHTML = "Hello World";
