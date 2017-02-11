@@ -6,61 +6,74 @@ function Team(number, sct_score, score, test) {
 }
 function setUI(obj) {
     obj = obj || new Team();
-    
-    //Creates UI elements inside a form
     for (var key in obj) {
-        if (key != Object.keys(obj)[0]) {//Ignores the first value of obj
+        if (key != Object.keys(obj)[0]) {
             if (obj.hasOwnProperty(key)) {
                 if (!$("#" + key).length) {
-                    //Create UI element
+                    var id = key;
                     var elmt = $("<span class='lable'>"+key+": </span><input id='"+key+"'  class='field'><br/>");
                     $("form").append(elmt);
+                    $("#"+key).change(function(){
+                        setTeamInfo($(this).attr("id"));
+                    });
                 }
-                //Refresh UI element
                 $("#"+key).val(obj[key]);
             }
         }
     }
 }
 function getUI(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            obj[key] = $("#"+key).val();
-        }
-    }
+    $(".field").each(function(){
+        obj[$(this).attr("id")] = $(this).val();
+    });
 }
-function setTeamInfo () {
+function setTeamInfo(valChanged) {
     var teamNumber = $("#number").val();
     getUI(team);
+    $.ajax({
+        url : 'php/getTeamInfo.php?q=' + teamNumber,
+        type : 'GET',
+        dataType : "json",
+    }).done(function(data){
+        var teamNumber = $("#number").val();
+        var dataToSend = data;
+        dataToSend[valChanged] = team[valChanged];
+        team = dataToSend;
+        setUI(team);
+        $.ajax({
+            url : 'php/setTeamInfo.php?q=' + teamNumber,
+            type : 'POST',
+            data : {data : JSON.stringify(dataToSend)}
+        }).fail(function(){
+            alert("An error has occurred!");
+        }).done({
+            
+        });
+    });
+}
+function setAllTeamInfo() {
+    var teamNumber = $("#number").val();
     $.ajax({
         url : 'php/setTeamInfo.php?q=' + teamNumber,
         type : 'POST',
         data : {data : JSON.stringify(team)}
     }).fail(function(){
-        alert("error");
-    }).done(function(){
-        alert("completed");
-    });
+        alert("An error has occurred!");
+    })
 }
-function getTeamInfo () {
+function getTeamInfo() {
     var teamNumber = $("#number").val();
     $.ajax({
         url : 'php/getTeamInfo.php?q=' + teamNumber,
         type : 'GET',
         dataType : "json",
     }).done(function(data){
-        if (data.number == undefined) {
-            alert("Team does not exist");
+        if (data.number === undefined) {
+            alert("An error has occurred!");
         } else {
             team = data;
             setUI(team);
         }
     });
 }
-
 var team = new Team();
-//alert(JSON.stringify(team));
-
-function setHeader() {
-    document.getElementById("header").innerHTML = "Hello World";
-}
