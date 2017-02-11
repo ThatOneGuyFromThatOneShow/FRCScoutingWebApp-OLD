@@ -10,10 +10,14 @@
     <body>
         <h1 id="header"></h1>
         <form id="teamInfoForm" onsubmit="setAllTeamInfo(); return false;">
-            <button id="refreshUI" onclick="setUI(); return false;">Refresh UI</button>
-            <input id="submitButton" type="submit"><br/>
-            <span class="lable">number: </span>
-            <input id="number" class="field" type="number" onchange="getTeamInfo(); return false;"><br/>
+            <div style="margin-bottom: 15px;">
+                <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo(); return false;">
+                <input id="submitButton" type="submit"><br/>
+            </div>
+            <div>
+                <span class="lable">number: </span>
+                <input id="number" class="field" type="number" onchange="getTeamInfo(); return false;">
+            </div>
         </form>
     </body>
 </html>

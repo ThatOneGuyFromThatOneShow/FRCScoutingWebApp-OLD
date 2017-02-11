@@ -1,0 +1,40 @@
+body {
+    background-color: blue;
+}
+input[type=button] {
+    display: inline-block;
+    float: left;
+    margin-left: 120px;
+}
+input[type=submit] {
+    display: inline-block;
+    float: left;
+    margin-left: 10px;
+}
+.autoGen, #number {
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 7px;
+}
+.lable {
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 80px;
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 2px;
+    margin-left: 30px;
+    color: white;
+}
+.field {
+    display: inline-block;
+    float: left;
+    width: 350px;
+    resize: none;
+    overflow: hidden;
+}
+#number {
+    text-align: center;
+}
