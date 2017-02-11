@@ -1,17 +1,17 @@
 body {
-    background-color: blue;
+    background-color: darkgray;
 }
 input[type=button] {
     display: inline-block;
     float: left;
-    margin-left: 120px;
+    margin-left: 38px;
 }
-input[type=submit] {
-    display: inline-block;
-    float: left;
+#submitButton {
     margin-left: 10px;
 }
 .autoGen, #number {
+    display: inline-block;
+    float: left;
     margin-top: 0px;
     margin-left: 0px;
     margin-right: 0px;
@@ -21,12 +21,13 @@ input[type=submit] {
     display: inline-block;
     float: left;
     clear: left;
-    width: 80px;
+    width: 150px;
     text-align: left;
     padding-left: 10px;
-    padding-top: 2px;
+    padding-top: 1px;
     margin-left: 30px;
     color: white;
+    font-size: 20px;
 }
 .field {
     display: inline-block;
@@ -34,6 +35,13 @@ input[type=submit] {
     width: 350px;
     resize: none;
     overflow: hidden;
+}
+.matches {
+    display: inline-block;
+    float: left;
+    width: 350px;
+    height: 30px;
+    padding-left: 15px;
 }
 #number {
     text-align: center;

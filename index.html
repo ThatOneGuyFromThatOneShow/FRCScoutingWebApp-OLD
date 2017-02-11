@@ -9,15 +9,13 @@
     </head>
     <body>
         <h1 id="header"></h1>
-        <form id="teamInfoForm" onsubmit="setAllTeamInfo(); return false;">
-            <div style="margin-bottom: 15px;">
-                <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo(); return false;">
-                <input id="submitButton" type="submit"><br/>
-            </div>
-            <div>
-                <span class="lable">number: </span>
-                <input id="number" class="field" type="number" onchange="getTeamInfo(); return false;">
-            </div>
-        </form>
+        <div style="margin-bottom: 15px;">
+            <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo()" placeholder="Team Number">
+            <input id="submitButton" type="button" value="Submit" onclick="setAllTeamInfo()">
+        </div>
+        <div id="inputs">
+            <span class="lable">number: </span>
+            <input id="number" class="field" type="number" onchange="getTeamInfo()">
+        </div>
     </body>
 </html>
