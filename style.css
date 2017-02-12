@@ -1,7 +1,7 @@
 body {
     background-color: darkgray;
 }
-input[type=button] {
+input[type=button]:not(.matchSubmit) {
     display: inline-block;
     float: left;
     margin-left: 38px;
@@ -42,6 +42,22 @@ input[type=button] {
     width: 350px;
     height: 30px;
     padding-left: 15px;
+}
+.matchDiv {
+    float: left;
+    clear: left;
+    padding: 10px;
+    padding-left: 0px;
+    border-style: solid;
+    border-color: aqua;
+    border-width: 2px;
+    background-color: lightgray;
+}
+.matchSubmit {
+    display: inline-block;
+    float: left;
+    clear: left;
+    margin-left: 450px;
 }
 #number {
     text-align: center;
