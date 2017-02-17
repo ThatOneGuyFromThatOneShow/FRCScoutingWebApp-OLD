@@ -52,6 +52,7 @@ input[type=button]:not(.matchSubmit) {
     border-color: aqua;
     border-width: 2px;
     background-color: lightgray;
+    margin-bottom: 10px;
 }
 .matchSubmit {
     display: inline-block;
@@ -59,6 +60,6 @@ input[type=button]:not(.matchSubmit) {
     clear: left;
     margin-left: 450px;
 }
-#number {
+.number {
     text-align: center;
 }
