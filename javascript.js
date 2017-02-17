@@ -26,7 +26,7 @@ function setMatchList(matchList, obj) {
         var sugMatchNumber = (parseInt(obj[matchList].length)+1);
         $("#_"+matchList).append(elmt);
         $("#"+elmtId).val(sugMatchNumber);
-        $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchSubmit' value='Create Match'>"));
+        $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchCreate' value='Create Match'>"));
         $("#submit_"+matchList).click(function(){
             var matchNumber = parseInt($("#"+elmtId).val());
             var newMatch = new MatchInfo(matchNumber);
@@ -53,20 +53,18 @@ function setMatchList(matchList, obj) {
                 $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
             }
         }
+        $("#_"+matchList).append($("<input type='button' id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete' value='Delete Match'>"));
+        $("#delete_"+matchList).click(function(){
+            obj[matchList].splice((matchSleceted-1), 1);
+            $("#"+matchList+" option[value='"+matchSleceted+"']").remove();
+            $("#"+matchList).val("");
+            setMatchList(matchList, matchSleceted);
+            //setTeamInfo(matchList, matchSleceted);
+        });
         $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchSubmit' value='Submit Match'>"));
         $("#submit_"+matchList).click(function(){
             setTeamInfo(matchList, String(matchSleceted-1));
         });
-        if(obj[matchList][(matchSleceted-1)][Object.keys(obj[matchList][(matchSleceted-1)])[0]] === obj[matchList].length) {
-            $("#_"+matchList).append($("<input type='button' id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete' value='Delete Match'>"));
-            $("#delete_"+matchList).click(function(){
-                obj[matchList].splice((matchSleceted-1), 1);
-                $("#"+matchList+" option[value='"+matchSleceted+"']").remove();
-                $("#"+matchList).val("");
-                setMatchList(matchList, matchSleceted);
-                //setTeamInfo(matchList, matchSleceted);
-            });
-        }
     }
 }
 function forEachObject(array, callback) {

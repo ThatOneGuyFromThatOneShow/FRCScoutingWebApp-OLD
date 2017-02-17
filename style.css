@@ -1,7 +1,7 @@
 body {
     background-color: darkgray;
 }
-input[type=button]:not(.matchSubmit) {
+input[type=button]:not(.matchSubmit):not(.matchDelete):not(.matchCreate) {
     display: inline-block;
     float: left;
     margin-left: 38px;
@@ -54,10 +54,21 @@ input[type=button]:not(.matchSubmit) {
     background-color: lightgray;
     margin-bottom: 10px;
 }
+.matchDelete {
+    display: inline-block;
+    clear: left;
+    float: left;
+    margin-left: 345px;
+}
 .matchSubmit {
     display: inline-block;
     float: left;
+    margin-left: 10px;
+}
+.matchCreate {
+    display: inline-block;
     clear: left;
+    float: left;
     margin-left: 450px;
 }
 .number {
