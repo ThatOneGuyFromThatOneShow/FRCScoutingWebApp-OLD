@@ -31,13 +31,13 @@ function forEachObject(array, callback) {
 function setMatchList(matchList, obj) {
     obj = obj || new Team();
     baseObj = new Team();
-    var matchSleceted = $("#"+matchList).val();
+    var matchSelected = $("#"+matchList).val();
     $("#_"+matchList+" .matchAutoGen").remove();
-    if (matchSleceted === "") {
+    if (matchSelected === "") {
         
-    } else if (matchSleceted === "newMatch") {
+    } else if (matchSelected === "newMatch") {
         //OPEN CREATE NEW MATCH UI
-        var elmtId = matchList + "_" + matchSleceted.toString() + "_" + "newMatchNumber";
+        var elmtId = matchList + "-" + matchSelected.toString() + "-" + "newMatchNumber";
         var elmt = $("<span class='matchLable autoGen matchAutoGen'>Match Number: </span><input id='"+elmtId+"' class='number matchField autoGen matchAutoGen' type='number'>");
         var sugMatchNumber = (arrayLengthWithoutNull(obj[matchList])+1);
         $("#_"+matchList).append(elmt);
@@ -45,20 +45,28 @@ function setMatchList(matchList, obj) {
         $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchCreate' value='Create Match'>"));
         $("#submit_"+matchList).click(function(){
             var matchNumber = parseInt($("#"+elmtId).val());
-            var newMatch = new MatchInfo(matchNumber);
-            obj[matchList][(matchNumber-1)] = newMatch;
-            setTeamInfo(matchList, (matchNumber-1));
+            //alert(obj[matchList][matchNumber-1]);
+            if (obj[matchList][matchNumber-1] === null || obj[matchList][matchNumber-1] === undefined) {
+                var newMatch = new MatchInfo(matchNumber);
+                obj[matchList][(matchNumber-1)] = newMatch;
+                setTeamInfo(matchList, (matchNumber-1));
+            } else {
+                alert("Match already exists!")
+            }
         });
     } else {
         //OPEN SET MATCH UI
-        for (var key in obj[matchList][(matchSleceted-1)]) {
-            if (key != Object.keys(obj[matchList][(matchSleceted-1)])[0]) {
-                var keyValue = obj[matchList][matchSleceted-1][key];
-                var elmtId = matchList + "_" + matchSleceted.toString() + "_" + key;
+        for (var key in obj[matchList][(matchSelected-1)]) {
+            if (key != Object.keys(obj[matchList][(matchSelected-1)])[0]) {
+                var thisKey = key;
+                var keyValue = obj[matchList][matchSelected-1][key];
+                var elmtId = matchList + "-" + matchSelected.toString() + "-" + key;
                 var elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace("_", " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
                 $("#_"+matchList).append(elmt);
                 $("#"+elmtId).change(function(){
-                    //setTeamInfo($(matchList).attr("id"));
+                    var valId = $(this).prop("id");
+                    valId = valId.substring(valId.lastIndexOf("-")+1);
+                    setTeamInfo(matchList, parseInt(matchSelected)-1, valId);
                 });
                 $("#"+elmtId).keydown(function(){
                     $(this).height(0);
@@ -69,21 +77,23 @@ function setMatchList(matchList, obj) {
                 $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
             }
         }
-        $("#_"+matchList).append($("<input type='button' id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete' value='Delete Match'>"));
+        $("#_"+matchList).append($("<button id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete'>Delete Match</button>"));
         $("#delete_"+matchList).click(function(){
-            delete obj[matchList][matchSleceted-1];
-            $("#"+matchList+" option[value='"+matchSleceted+"']").remove();
-            $("#"+matchList).val("");
-            setMatchList(matchList, matchSleceted);
-            setTeamInfo(matchList, (matchSleceted-1));
+            if(confirm("You are about to delete all the data for match: "+matchSelected+".\nAre you sure you would like to continue?")){
+                delete obj[matchList][matchSelected-1];
+                $("#"+matchList+" option[value='"+matchSelected+"']").remove();
+                $("#"+matchList).val("");
+                setMatchList(matchList, matchSelected);
+                setTeamInfo(matchList, (matchSelected-1));
+            }
         });
-        $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchSubmit' value='Submit Match'>"));
+        $("#_"+matchList).append($("<button id='submit_"+matchList+"' class='autoGen matchAutoGen matchSubmit'>Submit Match</button>"));
         $("#submit_"+matchList).click(function(){
-            setTeamInfo(matchList, String(matchSleceted-1));
+            setTeamInfo(matchList, String(matchSelected-1));
         });
     }
 }
-function setUI(obj) {
+function setUI(obj, dontRebuildArray) {
     obj = obj || new Team();
     var baseObj = new Team();
     if (obj[Object.keys(obj)[0]] === undefined || obj[Object.keys(obj)[0]] == 0) {
@@ -92,28 +102,30 @@ function setUI(obj) {
         for (var key in obj) {
             if (key != Object.keys(obj)[0] && obj.hasOwnProperty(key)) {
                 if (Array.isArray(obj[key])) {
-                    $("#"+key).remove();
-                    $("#"+key+"Span").remove();
-                    $("#_"+key).remove();
-                    $("#inputs").append("<div id='_"+key+"' class='matchDiv'></div>");
-                    var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("_", " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
-                    $("#_"+key).append(elmt);
-                    var inArray = undefined;
-                    forEachObject(obj[key], function(obj, i) {
-                        var inKey = obj[Object.keys(obj)[0]];
-                        var newOption = $("<option value='"+inKey+"'>Match: "+inKey+"</option>");
-                        $("#"+key).append(newOption);
-                    })
-/*
-                    for (inArray in obj[key]) {
-                        var inKey = obj[key][inArray][Object.keys(obj[key][inArray])[0]];
-                        var newOption = $("<option value='"+inKey+"'>Match: "+inKey+"</option>");
-                        $("#"+key).append(newOption);
+                    if(!dontRebuildArray) {
+                        $("#"+key).remove();
+                        $("#"+key+"Span").remove();
+                        $("#_"+key).remove();
+                        $("#inputs").append("<div id='_"+key+"' class='matchDiv'></div>");
+                        var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("_", " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
+                        $("#_"+key).append(elmt);
+                        forEachObject(obj[key], function(obj, i) {
+                            var inKey = obj[Object.keys(obj)[0]];
+                            var newOption = $("<option value='"+inKey+"'>Match: "+inKey+"</option>");
+                            $("#"+key).append(newOption);
+                        });
+                        $("#"+key).change(function(){
+                            setMatchList($(this).attr("id"), obj);
+                        });
+                    } else {
+                        var matchList = key;
+                        var matchSelected = $("#"+key).val();
+                        for (var inObj in obj[matchList][matchSelected-1]) {
+                            var elmtId = matchList + "-" + matchSelected + "-" + inObj;
+                            var keyValue = obj[matchList][matchSelected-1][inObj];
+                            $("#"+elmtId).val(keyValue);
+                        }
                     }
-*/
-                    $("#"+key).change(function(){
-                        setMatchList($(this).attr("id"), obj);
-                    });
                 } else {
                     if (!$("#" + key).length) {
                         var elmt = $("<span class='lable autoGen'>"+key.replace("_", " ")+": </span><textarea id='"+key+"' class='field autoGen' />");
@@ -142,7 +154,7 @@ function getUI(obj) {
         for (var key in obj[$(this).attr("id")]) {
             for (var val in obj[$(this).attr("id")][key]) {
                 var matchNumber = parseInt(key) + 1;
-                var elmtId = $(this).attr("id") + "_" + matchNumber + "_" + val;
+                var elmtId = $(this).attr("id") + "-" + matchNumber + "-" + val;
                 //alert(elmtId+"\n"+$("#"+elmtId).val());
                 if ($("#"+elmtId).val() !== undefined) {
                     obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
@@ -155,7 +167,7 @@ function deleteUI() {
     $(".autoGen").remove();
     $(".matchDiv").remove();
 }
-function setTeamInfo(valChanged, valChangedInArray) {
+function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
     var teamNumber = $("#number").val();
     getUI(team);
     $.ajax({
@@ -166,13 +178,19 @@ function setTeamInfo(valChanged, valChangedInArray) {
         var teamNumber = $("#number").val();
         var dataToSend = data;
         dataToSend.number = teamNumber;
-        if (valChangedInArray !== undefined) {
+        if (matchValChanged !== undefined) {
+            dataToSend[valChanged][valChangedInArray][matchValChanged] = team[valChanged][valChangedInArray][matchValChanged];
+            team = dataToSend;
+            setUI(team, true);
+        } else if (valChangedInArray !== undefined) {
             dataToSend[valChanged][valChangedInArray] = team[valChanged][valChangedInArray];
+            team = dataToSend;
+            setUI(team);
         } else {
             dataToSend[valChanged] = team[valChanged];
+            team = dataToSend;
+            setUI(team);
         }
-        team = dataToSend;
-        setUI(team);
         $.ajax({
             url : 'php/setTeamInfo.php?q=' + teamNumber,
             type : 'POST',
