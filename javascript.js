@@ -51,7 +51,7 @@ function setMatchList(matchList, obj) {
                 obj[matchList][(matchNumber-1)] = newMatch;
                 setTeamInfo(matchList, (matchNumber-1));
             } else {
-                alert("Match already exists!")
+                alert("Match already exists!");
             }
         });
     } else {
