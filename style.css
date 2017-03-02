@@ -1,16 +1,16 @@
 body {
     background-color: darkgray;
 }
-input[type=button]:not(.matchSubmit):not(.matchDelete):not(.matchCreate) {
-    display: inline-block;
+input[type=button] {
+    display: inline-flex;
     float: left;
-    margin-left: 38px;
+    margin-left: 18px;
 }
 #submitButton {
     margin-left: 10px;
 }
 .autoGen, #number {
-    display: inline-block;
+    display: inline-flex;
     float: left;
     margin-top: 0px;
     margin-left: 0px;
@@ -18,26 +18,23 @@ input[type=button]:not(.matchSubmit):not(.matchDelete):not(.matchCreate) {
     margin-bottom: 7px;
 }
 .lable, .matchLable {
-    display: inline-block;
     float: left;
     clear: left;
     width: 150px;
     text-align: left;
     padding-left: 10px;
     padding-top: 1px;
-    margin-left: 30px;
+    margin-left: 10px;
     color: white;
     font-size: 20px;
 }
 .field, .matchField {
-    display: inline-block;
     float: left;
     width: 350px;
     resize: none;
     overflow: hidden;
 }
 .matches {
-    display: inline-block;
     float: left;
     width: 350px;
     height: 30px;
@@ -55,22 +52,38 @@ input[type=button]:not(.matchSubmit):not(.matchDelete):not(.matchCreate) {
     margin-bottom: 10px;
 }
 .matchDelete {
-    display: inline-block;
     clear: left;
     float: left;
-    margin-left: 345px;
+    margin-left: 325px;
 }
 .matchSubmit {
-    display: inline-block;
     float: left;
     margin-left: 10px;
 }
 .matchCreate {
-    display: inline-block;
     clear: left;
     float: left;
     margin-left: 450px;
 }
 .number {
     text-align: center;
+}
+.container {
+    width: 100%;
+}
+
+#table {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#teamInfo {
+    background-color: #b4b3b3;
+    display: inline-block;
+    border-color: aqua;
+    border-width: 2px;
+    border-style: solid;
+    padding: 10px;
 }

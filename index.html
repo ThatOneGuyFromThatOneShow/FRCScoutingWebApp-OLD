@@ -8,14 +8,15 @@
         <script type="text/javascript" src="javascript.js"></script>
     </head>
     <body>
-        <h1 id="header"></h1>
-        <div style="margin-bottom: 15px;">
-            <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo()" placeholder="Team Number">
-            <input id="submitButton" type="button" value="Submit" onclick="setAllTeamInfo()">
-        </div>
-        <div id="inputs">
-            <span class="lable">number: </span>
-            <input id="number" class="field number" type="number" onchange="getTeamInfo()">
+        <div id="teamInfo">
+            <div style="margin-bottom: 15px;">
+                <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo()" placeholder="Team Number">
+                <input id="submitButton" type="button" value="Submit" onclick="setAllTeamInfo()">
+            </div>
+            <div id="inputs">
+                <span class="lable">number: </span>
+                <input id="number" class="field number" type="number" onchange="getTeamInfo()">
+            </div>
         </div>
     </body>
 </html>

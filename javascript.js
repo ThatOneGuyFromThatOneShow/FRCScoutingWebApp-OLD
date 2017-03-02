@@ -11,6 +11,7 @@ function Team(number, ball_shooting, ball_dumping, gear_colection, notes) {
     this.notes = notes || "";
     this.matches = [];
 }
+//Returns length of array excluding  null values
 function arrayLengthWithoutNull(array) {
     var length = 0;
     for (var i=0; i<array.length; i++) {
@@ -19,6 +20,7 @@ function arrayLengthWithoutNull(array) {
     }
     return length;
 }
+//Runs callback with the object inside array and the index of the object, for each element in array. (Custom for in loop that doesn't break when it hits a  null value)
 function forEachObject(array, callback) {
     if (!array || !callback)
         return;
@@ -42,7 +44,7 @@ function setMatchList(matchList, obj) {
         var sugMatchNumber = (arrayLengthWithoutNull(obj[matchList])+1);
         $("#_"+matchList).append(elmt);
         $("#"+elmtId).val(sugMatchNumber);
-        $("#_"+matchList).append($("<input type='button' id='submit_"+matchList+"' class='autoGen matchAutoGen matchCreate' value='Create Match'>"));
+        $("#_"+matchList).append($("<button id='submit_"+matchList+"' class='autoGen matchAutoGen matchCreate'>Create Match</button>"));
         $("#submit_"+matchList).click(function(){
             var matchNumber = parseInt($("#"+elmtId).val());
             //alert(obj[matchList][matchNumber-1]);
