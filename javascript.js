@@ -120,6 +120,7 @@ function setUI(obj, dontRebuildArray) {
                             setMatchList($(this).attr("id"), obj);
                         });
                     } else {
+                        alert("Rebuild");
                         var matchList = key;
                         var matchSelected = $("#"+key).val();
                         for (var inObj in obj[matchList][matchSelected-1]) {
@@ -177,6 +178,7 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
         type : 'GET',
         dataType : "json",
     }).done(function(data){
+        alert("Data got");
         var teamNumber = $("#number").val();
         var dataToSend = data;
         dataToSend.number = teamNumber;
@@ -204,6 +206,7 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
         var teamNumber = $("#number").val();
         var dataToSend = team;
         dataToSend.number = teamNumber;
+        setUI(team);
         $.ajax({
             url : 'php/setTeamInfo.php?q=' + teamNumber,
             type : 'POST',
@@ -240,5 +243,8 @@ function getTeamInfo() {
         team = new Team(teamNumber);
         setUI(team);
     });
+}
+function sortTeams() {
+    
 }
 var team = new Team();
