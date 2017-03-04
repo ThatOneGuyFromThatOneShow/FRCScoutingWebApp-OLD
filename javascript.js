@@ -2,6 +2,8 @@ function MatchInfo(number) {
     this.match_number = number;
     this.points = "";
     this.notes = "";
+    this.bool_test__bool = false;
+    this.number_test__num = 0;
 }
 function Team(number, ball_shooting__num, ball_dumping__bool, gear_colection, notes) {
     this.number = number || 0;
@@ -63,20 +65,42 @@ function setMatchList(matchList, obj) {
                 var thisKey = key;
                 var keyValue = obj[matchList][matchSelected-1][key];
                 var elmtId = matchList + "-" + matchSelected.toString() + "-" + key;
-                var elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace("_", " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
+                var elmt;
+                if (key.endsWith("__bool")) {
+                    var elmtName = key.replace("__bool", "");
+                    elmtName = elmtName.replace("_", " ");
+                    elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen' type='checkbox' >");
+                } else if (key.endsWith("__num")) {
+                    var elmtName = key.replace("__num", "");
+                    elmtName = elmtName.replace("_", " ");
+                    elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen' type='number' >");
+                } else {
+                    elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace("_", " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
+                    elmt.keydown(function(){
+                        $(this).height(0);
+                        $(this).height($(this)[0].scrollHeight);
+                    });
+                }
                 $("#_"+matchList).append(elmt);
                 $("#"+elmtId).change(function(){
                     var valId = $(this).prop("id");
                     valId = valId.substring(valId.lastIndexOf("-")+1);
                     setTeamInfo(matchList, parseInt(matchSelected)-1, valId);
                 });
-                $("#"+elmtId).keydown(function(){
-                    $(this).height(0);
-                    $(this).height($(this)[0].scrollHeight);
-                });
-                $("#"+elmtId).val(keyValue);
-                $("#"+elmtId).height(0);
-                $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
+                
+                if (key.endsWith("__num")) {
+                    $("#"+elmtId).val(parseInt(keyValue));
+                } else if (key.endsWith("__bool")) {
+                    $("#"+elmtId).prop("checked", keyValue);
+                } else {
+                    $("#"+elmtId).val(keyValue);
+                    $("#"+elmtId).height(0);
+                    $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
+                }
+                
+//                $("#"+elmtId).val(keyValue);
+//                $("#"+elmtId).height(0);
+//                $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
             }
         }
         $("#_"+matchList).append($("<button id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete'>Delete Match</button>"));
@@ -120,7 +144,6 @@ function setUI(obj, dontRebuildArray) {
                             setMatchList($(this).attr("id"), obj);
                         });
                     } else {
-                        alert("Rebuild");
                         var matchList = key;
                         var matchSelected = $("#"+key).val();
                         for (var inObj in obj[matchList][matchSelected-1]) {
@@ -184,7 +207,11 @@ function getUI(obj) {
                 var elmtId = $(this).attr("id") + "-" + matchNumber + "-" + val;
                 //alert(elmtId+"\n"+$("#"+elmtId).val());
                 if ($("#"+elmtId).val() !== undefined) {
-                    obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
+                    if (elmtId.endsWith("__bool")) {
+                        obj[$(this).attr("id")][key][val] = $("#"+elmtId).prop("checked");
+                    } else {
+                        obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
+                    }
                 }
             }
         }
