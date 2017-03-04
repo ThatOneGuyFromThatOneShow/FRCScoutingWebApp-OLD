@@ -3,13 +3,13 @@ function MatchInfo(number) {
     this.points = "";
     this.notes = "";
 }
-function Team(number, ball_shooting, ball_dumping, gear_colection, notes) {
+function Team(number, ball_shooting__num, ball_dumping__bool, gear_colection, notes) {
     this.number = number || 0;
-    this.ball_shooting = ball_shooting || "";
-    this.ball_dumping = ball_dumping || "";
+    this.ball_shooting__num = ball_shooting__num || 0;
+    this.ball_dumping__bool = ball_dumping__bool || false;
     this.gear_colection = gear_colection || "";
     this.notes = notes || "";
-    this.matches = [];
+    this.matches__match = [];
 }
 //Returns length of array excluding  null values
 function arrayLengthWithoutNull(array) {
@@ -103,13 +103,13 @@ function setUI(obj, dontRebuildArray) {
     } else {
         for (var key in obj) {
             if (key != Object.keys(obj)[0] && obj.hasOwnProperty(key)) {
-                if (Array.isArray(obj[key])) {
+                if (Array.isArray(obj[key]) && key.endsWith("__match")) {
                     if(!dontRebuildArray) {
                         $("#"+key).remove();
                         $("#"+key+"Span").remove();
                         $("#_"+key).remove();
                         $("#inputs").append("<div id='_"+key+"' class='matchDiv'></div>");
-                        var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("_", " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
+                        var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("__match", "").replace("_", " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
                         $("#_"+key).append(elmt);
                         forEachObject(obj[key], function(obj, i) {
                             var inKey = obj[Object.keys(obj)[0]];
@@ -131,19 +131,38 @@ function setUI(obj, dontRebuildArray) {
                     }
                 } else {
                     if (!$("#" + key).length) {
-                        var elmt = $("<span class='lable autoGen'>"+key.replace("_", " ")+": </span><textarea id='"+key+"' class='field autoGen' />");
+                        var elmt;
+                        var elmtType = "";
+                        if (key.endsWith("__num")) {
+                            var elmtName = key.replace("__num", "");
+                            elmtName = elmtName.replace("_", " ");
+                            elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='number' >");
+                        } else if (key.endsWith("__bool")) {
+                            var elmtName = key.replace("__bool", "");
+                            elmtName = elmtName.replace("_", " ");
+                            elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='checkbox' >");
+                        } else {
+                            var elmtName = key.replace("_", " ");
+                            var elmt = $("<span class='lable autoGen'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
+                            elmt.keydown(function(){
+                                $(this).height(0);
+                                $(this).height($(this)[0].scrollHeight);
+                            });
+                        }
                         $("#inputs").append(elmt);
                         $("#"+key).change(function(){
                             setTeamInfo($(this).attr("id"));
                         });
-                        $("#"+key).keydown(function(){
-                            $(this).height(0);
-                            $(this).height($(this)[0].scrollHeight);
-                        });
+                    }    
+                    if (key.endsWith("__num")) {
+                        $("#"+key).val(parseInt(obj[key]));
+                    } else if (key.endsWith("__bool")) {
+                        $("#"+key).prop("checked", obj[key]);
+                    } else {
+                        $("#"+key).val(obj[key]);
+                        $("#"+key).height(0);
+                        $("#"+key).height($("#"+key)[0].scrollHeight);
                     }
-                    $("#"+key).val(obj[key]);
-                    $("#"+key).height(0);
-                    $("#"+key).height($("#"+key)[0].scrollHeight);
                 }
             }
         }
@@ -151,7 +170,12 @@ function setUI(obj, dontRebuildArray) {
 }
 function getUI(obj) {
     $(".field").each(function(){
-        obj[$(this).attr("id")] = $(this).val();
+        var elmtId = $(this).attr("id");
+        if (elmtId.endsWith("__bool")) {
+            obj[$(this).attr("id")] = $(this).prop("checked");
+        } else {
+            obj[$(this).attr("id")] = $(this).val();
+        }
     });
     $(".matches").each(function(){
         for (var key in obj[$(this).attr("id")]) {
@@ -178,7 +202,6 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
         type : 'GET',
         dataType : "json",
     }).done(function(data){
-        alert("Data got");
         var teamNumber = $("#number").val();
         var dataToSend = data;
         dataToSend.number = teamNumber;

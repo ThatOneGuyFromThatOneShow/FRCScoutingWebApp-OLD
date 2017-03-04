@@ -6,6 +6,9 @@ input[type=button] {
     float: left;
     margin-left: 18px;
 }
+input[type=number] {
+    height: 19px;
+}
 #submitButton {
     margin-left: 10px;
 }
