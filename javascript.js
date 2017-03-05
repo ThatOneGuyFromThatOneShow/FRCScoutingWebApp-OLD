@@ -196,6 +196,8 @@ function getUI(obj) {
         var elmtId = $(this).attr("id");
         if (elmtId.endsWith("__bool")) {
             obj[$(this).attr("id")] = $(this).prop("checked");
+        } else if (elmtId.endsWith("__num")) {
+            obj[$(this).attr("id")] = parseInt($(this).val());
         } else {
             obj[$(this).attr("id")] = $(this).val();
         }
@@ -209,6 +211,8 @@ function getUI(obj) {
                 if ($("#"+elmtId).val() !== undefined) {
                     if (elmtId.endsWith("__bool")) {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).prop("checked");
+                    } else if (elmtId.endsWith("__num")) {
+                        obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
                     } else {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
                     }
@@ -294,7 +298,71 @@ function getTeamInfo() {
         setUI(team);
     });
 }
-function sortTeams() {
+function sortMatches(arr, valPath, valArgs) {
+    var tempArray = [{number : 2,matches : [{match : 1,score : 60},{match : 2,score : 40}]},{number : 1,matches : [{match : 1,score : 55},{match : 2,score : 55}]}];
     
+    var makeAvg = [];
+    var sortHigh = [];
+    valArgs = valArgs || [];
+    for (key in valArgs) {
+        makeAvg[key] = false;
+        sortHigh[key] = true;
+        var args = valArgs[key].split("--");
+        for (argKey in args) {
+            if (valArgs[key] == "avg") {
+                makeAvg[key] = true;
+            } else if (valArgs[key] == "sLow") {
+                sortHigh[key] = false;
+            }
+        }
+    }
+    
+    tempArray.sort(function(a, b){
+        //DEFINE Vars
+        var aVal = 0;
+        var bVal = 0;
+        var toReturn = 0;
+        
+        //Loop through matches and save best/avg value
+        for (i in valPath) {
+            if (Array.isArray(valPath[i])) {
+                for (key in a[valPath[i][0]]) {
+                    if (makeAvg) {
+                        aVal += a[valPath[i][0]][key][[valPath[i][2]]];
+                    } else if (a[valPath[i][0]][key][[valPath[i][2]]] > aVal) {
+                        aVal = a[valPath[i][0]][key][[valPath[i][2]]];
+                    }
+                }
+                for (key in b[valPath[i][0]]) {
+                    if (makeAvg[i]) {
+                        bVal += b[valPath[i][0]][key][[valPath[i][2]]];
+                    } else if (b[valPath[i][0]][key][[valPath[i][2]]] > bVal) {
+                        bVal = b[valPath[i][0]][key][[valPath[i][2]]];
+                    }
+                }
+                if (makeAvg[i]) {
+                    aVal = aVal / (a[valPath[i][0]].length);
+                    bVal = bVal / (b[valPath[i][0]].length);
+                }
+            } else {
+                aVal = a[valPath[i]];
+                bVal = b[valPath[i]];
+            }
+            
+            toReturn = (sortHigh[i]) ? bVal - aVal : aVal - bVal;
+            if (toReturn != 0)
+                break;
+        }
+        //DEFAULT SORT CASE (if all sorts are tied OR no sort options were passed in)
+        if (toReturn == 0) {
+            aVal = a["number"];
+            bVal = b["number"];
+            toReturn = aVal - bVal;
+        }
+        return toReturn;
+    });
+    alert(JSON.stringify(tempArray));
 }
 var team = new Team();
+var sortVals = [];
+sortMatches(team, sortVals, ["sLow"]);
