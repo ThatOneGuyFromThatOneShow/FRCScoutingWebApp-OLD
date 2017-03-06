@@ -306,7 +306,9 @@ function sortMatches(arr, valPath, valArgs) {
     var tempArray = [{number : 2,matches : [{match : 1,score : 60},{match : 2,score : 40}]},{number : 1,matches : [{match : 1,score : 55},{match : 2,score : 55}]}];
     var makeAvg = [];
     var sortHigh = [];
-    valArgs = valArgs || [];
+    
+    if (valArgs === undefined)
+        valArgs = [""];
     for (key in valArgs) {
         makeAvg[key] = false;
         sortHigh[key] = true;
@@ -329,7 +331,7 @@ function sortMatches(arr, valPath, valArgs) {
         for (i in valPath) {
             if (Array.isArray(valPath[i])) {
                 for (key in a[valPath[i][0]]) {
-                    if (makeAvg) {
+                    if (makeAvg[i]) {
                         aVal += a[valPath[i][0]][key][[valPath[i][2]]];
                     } else if (a[valPath[i][0]][key][[valPath[i][2]]] > aVal) {
                         aVal = a[valPath[i][0]][key][[valPath[i][2]]];
@@ -350,8 +352,18 @@ function sortMatches(arr, valPath, valArgs) {
                 aVal = a[valPath[i]];
                 bVal = b[valPath[i]];
             }
-            
-            toReturn = (sortHigh[i]) ? bVal - aVal : aVal - bVal;
+            if (aVal == true || aVal == false) {
+                if (aVal == true && bVal == true)
+                    toReturn = 0;
+                else if (aVal == false && bVal == false)
+                    toReturn = 0;
+                else if (aVal == true && bVal == false)
+                    toReturn = (sortHigh[i]) ? -1 : 1;
+                else if (aVal == false && bVal == true)
+                    toReturn = (sortHigh[i]) ? 1 : -1;
+            } else {
+                toReturn = (sortHigh[i]) ? bVal - aVal : aVal - bVal;
+            }
             if (toReturn != 0)
                 break;
         }
@@ -363,13 +375,12 @@ function sortMatches(arr, valPath, valArgs) {
         }
         return toReturn;
     });
-    //alert(JSON.stringify(arr));
+    alert(JSON.stringify(arr));
 }
 
-var arry = '[{"number":"4","ball_shooting__num":"0","ball_dumping__bool":true,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":""}]},{"number":"5","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","boolTest__bool":false}]},{"number":"6","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"7","ball_shooting__num":6,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"1","notes":"12","bool_test__bool":"on"}]},{"number":"8","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"9","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"6"}]},{"number":"10","ball_shooting__num":0,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"4"}]}]';
-
+var arry = '[{"number":"4","ball_shooting__num":"0","ball_dumping__bool":true,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":""}]},{"number":"5","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","boolTest__bool":false}]},{"number":"6","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"7","ball_shooting__num":6,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"1","notes":"12","bool_test__bool":"on"}]},{"number":"8","ball_shooting__num":"0","ball_dumping__bool":true,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"9","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"6"}]},{"number":"10","ball_shooting__num":0,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"4"}]}]';
 arry = JSON.parse(arry);
 
 var team = new Team();
-var sortVals = ["ball_shooting__num"];
-sortMatches(arry, sortVals, ["avg"]);
+var sortVals = ["ball_dumping__bool"];
+sortMatches(arry, sortVals);
