@@ -69,11 +69,11 @@ function setMatchList(matchList, obj) {
                 if (key.endsWith("__bool")) {
                     var elmtName = key.replace("__bool", "");
                     elmtName = elmtName.replace("_", " ");
-                    elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen' type='checkbox' >");
+                    elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='checkbox' >");
                 } else if (key.endsWith("__num")) {
                     var elmtName = key.replace("__num", "");
                     elmtName = elmtName.replace("_", " ");
-                    elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen' type='number' >");
+                    elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='number' >");
                 } else {
                     elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace("_", " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
                     elmt.keydown(function(){
@@ -226,6 +226,7 @@ function getUI(obj) {
     });
 }
 function deleteUI() {
+    $(".aGen").remove();
     $(".autoGen").remove();
     $(".matchDiv").remove();
 }
@@ -302,13 +303,30 @@ function getTeamInfo() {
         setUI(team);
     });
 }
+function getAllTeamInfo(callback) {
+    $.ajax({
+        url : 'php/getAllTeams.php',
+        type : 'GET',
+        dataType : "json",
+    }).done(function(data){
+        callback(data);
+    }
+    ).fail(function(){
+        alert("An error has occurred!");
+    });
+}
 function sortMatches(arr, valPath, valArgs) {
-    var tempArray = [{number : 2,matches : [{match : 1,score : 60},{match : 2,score : 40}]},{number : 1,matches : [{match : 1,score : 55},{match : 2,score : 55}]}];
     var makeAvg = [];
     var sortHigh = [];
     
-    if (valArgs === undefined)
-        valArgs = [""];
+    if (valArgs === undefined) {
+        valArgs = Array(valPath.length);
+    } else {
+        for (key in valPath) {
+            if (valArgs[key] === undefined)
+                valArgs[key] = "";
+        }
+    }
     for (key in valArgs) {
         makeAvg[key] = false;
         sortHigh[key] = true;
@@ -318,6 +336,8 @@ function sortMatches(arr, valPath, valArgs) {
                 makeAvg[key] = true;
             } else if (valArgs[key] == "sLow") {
                 sortHigh[key] = false;
+            } else if (valArgs[key] == "sHigh") {
+                sortHigh[key] = true;
             }
         }
     }
@@ -352,7 +372,7 @@ function sortMatches(arr, valPath, valArgs) {
                 aVal = a[valPath[i]];
                 bVal = b[valPath[i]];
             }
-            if (aVal == true || aVal == false) {
+            if (typeof a === "booleon") {
                 if (aVal == true && bVal == true)
                     toReturn = 0;
                 else if (aVal == false && bVal == false)
@@ -375,12 +395,24 @@ function sortMatches(arr, valPath, valArgs) {
         }
         return toReturn;
     });
-    alert(JSON.stringify(arr));
+    return(arr);
 }
-
-var arry = '[{"number":"4","ball_shooting__num":"0","ball_dumping__bool":true,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":""}]},{"number":"5","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","boolTest__bool":false}]},{"number":"6","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"7","ball_shooting__num":6,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"1","notes":"12","bool_test__bool":"on"}]},{"number":"8","ball_shooting__num":"0","ball_dumping__bool":true,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false}]},{"number":"9","ball_shooting__num":"0","ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"6"}]},{"number":"10","ball_shooting__num":0,"ball_dumping__bool":false,"gear_colection":"","notes":"","matches__match":[{"match_number":1,"points":"","notes":"","bool_test__bool":false,"number_test__num":"4"}]}]';
-arry = JSON.parse(arry);
-
 var team = new Team();
-var sortVals = ["ball_dumping__bool"];
-sortMatches(arry, sortVals);
+
+function onLoad() {
+    getAllTeamInfo(function(data){
+        deleteUI();
+        var dataSorted = sortMatches(data, ["ball_shooting__num", "ball_dumping__bool"], ["","sLow"]);
+        alert(JSON.stringify(dataSorted));
+        for (key in dataSorted) {
+            $("body").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
+            for (objKey in dataSorted[key]) {
+                var displayName = objKey;
+                displayName = displayName.replace("__num", "")
+                displayName = displayName.replace("__bool", "")
+                displayName = displayName.replace(/_/g, " ");
+                 $("#div_"+key).append($("<div class='aGen' style='margin: 5px'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 100px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div><div/>"));    
+            }
+        }
+    });
+}
