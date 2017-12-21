@@ -1,3 +1,13 @@
+/* TODO:
+* Add Support for radio buttons (Add to main selection, match, and sorting function)
+* DOCUMENT CODE!!!
+* Add support for header text?
+* Finish sorting function
+* Finish sorting page
+*
+* WARNING when sorting matches the sorting will stop if there is a null match
+*/
+
 function MatchInfo(number) {
     this.match_number = number;
     this.points = "";
@@ -316,6 +326,10 @@ function getAllTeamInfo(callback) {
     });
 }
 function sortMatches(arr, valPath, valArgs) {
+    /*
+    To sort matches use an array of the field and match field to sort. Ex: ["matches__match", "match_number"]
+    Sort options are seperated by a -- you can use avg, sLow, and sHigh. Ex: avg--sLow
+    */
     var makeAvg = [];
     var sortHigh = [];
     
@@ -351,17 +365,18 @@ function sortMatches(arr, valPath, valArgs) {
         for (i in valPath) {
             if (Array.isArray(valPath[i])) {
                 for (key in a[valPath[i][0]]) {
+                    //alert(key);
                     if (makeAvg[i]) {
-                        aVal += a[valPath[i][0]][key][[valPath[i][2]]];
-                    } else if (a[valPath[i][0]][key][[valPath[i][2]]] > aVal) {
-                        aVal = a[valPath[i][0]][key][[valPath[i][2]]];
+                        aVal += a[valPath[i][0]][key][[valPath[i][1]]];
+                    } else if (a[valPath[i][0]][key][[valPath[i][1]]] > aVal) {
+                        aVal = a[valPath[i][0]][key][[valPath[i][1]]];
                     }
                 }
                 for (key in b[valPath[i][0]]) {
                     if (makeAvg[i]) {
-                        bVal += b[valPath[i][0]][key][[valPath[i][2]]];
-                    } else if (b[valPath[i][0]][key][[valPath[i][2]]] > bVal) {
-                        bVal = b[valPath[i][0]][key][[valPath[i][2]]];
+                        bVal += b[valPath[i][0]][key][[valPath[i][1]]];
+                    } else if (b[valPath[i][0]][key][[valPath[i][1]]] > bVal) {
+                        bVal = b[valPath[i][0]][key][[valPath[i][1]]];
                     }
                 }
                 if (makeAvg[i]) {
@@ -393,6 +408,7 @@ function sortMatches(arr, valPath, valArgs) {
             bVal = b["number"];
             toReturn = (aVal - bVal);
         }
+        //alert(toReturn);
         return toReturn;
     });
     return(arr);
@@ -400,18 +416,41 @@ function sortMatches(arr, valPath, valArgs) {
 var team = new Team();
 
 function onLoad() {
+    var sortingArgs = [];
+    
+    function createNewSortArgs() {
+        $("#sortingArgs").append($("<span style='padding: 5px;'><select id='sortOpt"+sortingArgs.length+"' ><option selected value> --- select option to sort --- </option></select></span>"));
+        for (key in team) {
+            $("#sortOpt"+sortingArgs.length).append($("<option>"+key+"</option>"));
+        };
+        $("#sortOpt"+sortingArgs.length).change(function(){
+            var tmpId = $(this).attr("id").replace("sortOpt", "");
+            sortingArgs[tmpId] = $(this).val();
+            //createNewSortArgs();
+            //alert(parseInt(tmpId) +1);
+            //alert(sortingArgs.length);
+            
+            if (sortingArgs[tmpId] !== "" && parseInt(tmpId)+1 === sortingArgs.length) {
+                createNewSortArgs();
+            } else if (sortingArgs[tmpId] === "" && parseInt(tmpId)+1 === sortingArgs.length) {
+                $("#sortOpt"+sortingArgs.length).remove();
+                sortingArgs = sortingArgs.slice(0, 1);
+            }
+        });
+    }
+    
     getAllTeamInfo(function(data){
         deleteUI();
-        var dataSorted = sortMatches(data, ["ball_shooting__num", "ball_dumping__bool"], ["","sLow"]);
+        $("body").append($("<div id='sortingArgs' style='padding-bottom: 20px;' />"));
+        createNewSortArgs();
+
+        var dataSorted = sortMatches(data, [["matches__match","number_test__num"]], ["sLow"]);
         alert(JSON.stringify(dataSorted));
         for (key in dataSorted) {
             $("body").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
             for (objKey in dataSorted[key]) {
-                var displayName = objKey;
-                displayName = displayName.replace("__num", "")
-                displayName = displayName.replace("__bool", "")
-                displayName = displayName.replace(/_/g, " ");
-                 $("#div_"+key).append($("<div class='aGen' style='margin: 5px'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 100px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div><div/>"));    
+                var displayName = objKey.replace("__num", "").replace("__bool", "").replace(/_/g, " ");;
+                $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));    
             }
         }
     });
