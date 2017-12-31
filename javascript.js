@@ -335,11 +335,10 @@ function sortMatches(arr, valPath, valArgs) {
     
     if (valArgs === undefined) {
         valArgs = Array(valPath.length);
-    } else {
-        for (key in valPath) {
-            if (valArgs[key] === undefined)
-                valArgs[key] = "";
-        }
+    }
+    for (key in valPath) {
+        if (valArgs[key] === undefined)
+            valArgs[key] = "";
     }
     for (key in valArgs) {
         makeAvg[key] = false;
@@ -366,6 +365,7 @@ function sortMatches(arr, valPath, valArgs) {
             if (Array.isArray(valPath[i])) {
                 for (key in a[valPath[i][0]]) {
                     //alert(key);
+                    //alert(valPath[i][0]);
                     if (makeAvg[i]) {
                         aVal += a[valPath[i][0]][key][[valPath[i][1]]];
                     } else if (a[valPath[i][0]][key][[valPath[i][1]]] > aVal) {
@@ -413,45 +413,81 @@ function sortMatches(arr, valPath, valArgs) {
     });
     return(arr);
 }
-var team = new Team();
-
-function onLoad() {
-    var sortingArgs = [];
-    
-    function createNewSortArgs() {
-        $("#sortingArgs").append($("<span style='padding: 5px;'><select id='sortOpt"+sortingArgs.length+"' ><option selected value> --- select option to sort --- </option></select></span>"));
-        for (key in team) {
-            $("#sortOpt"+sortingArgs.length).append($("<option>"+key+"</option>"));
-        };
-        $("#sortOpt"+sortingArgs.length).change(function(){
-            var tmpId = $(this).attr("id").replace("sortOpt", "");
-            sortingArgs[tmpId] = $(this).val();
-            //createNewSortArgs();
-            //alert(parseInt(tmpId) +1);
-            //alert(sortingArgs.length);
-            
-            if (sortingArgs[tmpId] !== "" && parseInt(tmpId)+1 === sortingArgs.length) {
-                createNewSortArgs();
-            } else if (sortingArgs[tmpId] === "" && parseInt(tmpId)+1 === sortingArgs.length) {
-                $("#sortOpt"+sortingArgs.length).remove();
-                sortingArgs = sortingArgs.slice(0, 1);
+function createNewSortArgs() {
+    $("#sortingArgs").append($("<div style='display: inline-block; padding-right: 20px;' id='sortSpan"+sortingArgs.length+"' style='padding: 5px;'><div><select id='sortOpt"+sortingArgs.length+"' ><option selected value> --- select option to sort --- </option></select></div></div>"));
+    for (key in team) {
+        $("#sortOpt"+sortingArgs.length).append($("<option>"+key+"</option>"));
+    };
+    $("#sortOpt"+sortingArgs.length).change(function(){
+        var tmpId = $(this).attr("id").replace("sortOpt", "");
+        var oldValue = sortingArgs[tmpId] || "";
+        var newValue = $(this).val();
+        sortingArgs[tmpId] = newValue;
+        if (Array.isArray(team[newValue])) {
+            $("#sortSpan"+tmpId).append($("<div style='display: table'><select id='matchVal"+tmpId+"' ></select></div>"));
+            for (key in new MatchInfo()) {
+                $("#matchVal"+tmpId).append($("<option>"+key+"</option>"));
             }
-        });
-    }
+            $("#matchVal"+tmpId).change(function(){
+                var tempId = $(this).attr("id").replace("matchVal", "");
+                var outer = $("#sortOpt"+tempId).val();
+                sortingArgs[tempId] = [outer, $(this).val()];
+            });
+            sortingArgs[tmpId] = [newValue, $("#matchVal"+tmpId).val()];
+        } else if (Array.isArray(team[oldValue])) {
+            $("#matchVal"+tmpId).remove();
+        }
+        
+        if (oldValue === "" && parseInt(tmpId)+1 === sortingArgs.length) {
+            createNewSortArgs();
+        } else if (newValue === "" && parseInt(tmpId)+1 === sortingArgs.length) {
+            $("#sortOpt"+sortingArgs.length).remove();
+            $("#sortSpan"+sortingArgs.length).remove();
+            sortingArgs = sortingArgs.slice(0, -1);
+        }
+        //sortingArgs[sortingArgs.length] = "";
+        //alert(JSON.stringify(sortingArgs));
+    });
+}
+function sortData(arr1, arr2) {
     
+    deleteUI();
     getAllTeamInfo(function(data){
-        deleteUI();
-        $("body").append($("<div id='sortingArgs' style='padding-bottom: 20px;' />"));
-        createNewSortArgs();
-
-        var dataSorted = sortMatches(data, [["matches__match","number_test__num"]], ["sLow"]);
-        alert(JSON.stringify(dataSorted));
+        var dataSorted = sortMatches(data, arr1, arr2);
+        //alert(JSON.stringify(dataSorted));
         for (key in dataSorted) {
             $("body").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
             for (objKey in dataSorted[key]) {
-                var displayName = objKey.replace("__num", "").replace("__bool", "").replace(/_/g, " ");;
-                $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));    
+                var displayName = objKey;
+                if (displayName.includes("__"))
+                    displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
+                displayName = displayName.replace("_", "");
+                if (Array.isArray(dataSorted[key][objKey])) {
+                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+" : </div></div></div><div/>"));
+                    //alert(JSON.stringify(dataSorted[key][objKey]));
+                    for (mKey in dataSorted[key][objKey]) {
+                        $("#sorted_"+key+objKey).append($("<div class='aGen' style='margin: 10px;'><div id='sorted_"+key+objKey+mKey+"' style='border-style: solid; border-color: red; background: #e4e4e4; border-width: 1px; display: block;'></div></div><div/>"));
+                        for (nKey in dataSorted[key][objKey][mKey]) {
+                            //alert();
+                            $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #eaeaea; border-width: 1px; display: flex;'><div style='width: 130px; display: inline-block; float: left; margin: 5px;'>"+nKey+" : </div><div style='float: left; text-align: right; display: inline-block; width: 180px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</div></div></div><div/>"));
+                        }
+                    }
+                    
+                    //("<div style='float: left; text-align: left; display: block; width: 360px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div>")
+                } else {
+                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));  
+                }
             }
         }
     });
+}
+var team = new Team();
+var sortingArgs = [];
+
+function onLoad() {
+    //deleteUI();
+    $("body").append($("<div id='sortingArgs' style='padding-bottom: 20px;' />"));
+    $("body").append($("<div style='padding-bottom: 20px;'><input id='sortTeams' type='button' value='Sort Teams' onclick='sortData(sortingArgs);'></div>"));
+    createNewSortArgs();
+    //sortData([["matches__match","number_test__num"]], ["sHigh"]);
 }
