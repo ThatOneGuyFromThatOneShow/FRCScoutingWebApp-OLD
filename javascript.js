@@ -198,7 +198,7 @@ function setUI(obj, dontRebuildArray) {
                         if (key.endsWith("__num")) {
                             var elmtName = key.replace("__num", "");
                             elmtName = elmtName.replace(/_/g, " ");
-                            elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='number' >");
+                            elmt = $("<span class='lable autoGen numLable'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='number' >");
                         } else if (key.endsWith("__bool")) {
                             var elmtName = key.replace("__bool", "");
                             elmtName = elmtName.replace(/_/g, " ");
@@ -207,7 +207,7 @@ function setUI(obj, dontRebuildArray) {
                             elmt = $("<span class='title autoGen'><h2 class='titleText' id='"+key+"'>"+obj[key]+"</h2></span>");
                         } else {
                             var elmtName = key.replace(/_/g, " ");
-                            var elmt = $("<span class='lable autoGen'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
+                            var elmt = $("<span class='lable autoGen textLable'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
                             elmt.keydown(function(){
                                 $(this).height(0);
                                 $(this).height($(this)[0].scrollHeight);
