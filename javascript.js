@@ -17,6 +17,7 @@ function MatchInfo(number) {
 }
 function Team(number, ball_shooting__num, ball_dumping__bool, gear_colection, notes) {
     this.number = number || 0;
+    this.auto__title = "Autonomous: ";
     this.ball_shooting__num = ball_shooting__num || 0;
     this.ball_dumping__bool = ball_dumping__bool || false;
     this.gear_colection = gear_colection || "";
@@ -174,18 +175,22 @@ function setUI(obj, dontRebuildArray) {
                             var elmtName = key.replace("__bool", "");
                             elmtName = elmtName.replace("_", " ");
                             elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='checkbox' >");
+                        } else if (key.endsWith("__title")) {
+                            elmt = $("<span class='lable autoGen'><h2 id='"+key+"' style='margin: 0px;'>"+obj[key]+"</21></span>");
                         } else {
                             var elmtName = key.replace("_", " ");
-                            var elmt = $("<span class='lable autoGen'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
+                            var elmt = $("<span class='lable autoGen title'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
                             elmt.keydown(function(){
                                 $(this).height(0);
                                 $(this).height($(this)[0].scrollHeight);
                             });
                         }
                         $("#inputs").append(elmt);
-                        $("#"+key).change(function(){
-                            setTeamInfo($(this).attr("id"));
-                        });
+                        if (!key.endsWith("__title")) {
+                            $("#"+key).change(function(){
+                                setTeamInfo($(this).attr("id"));
+                            });
+                        }
                     }
                     if (key == Object.keys(obj)[0]) {
                         $("#"+key).val(parseInt(obj[key]));
@@ -193,6 +198,8 @@ function setUI(obj, dontRebuildArray) {
                         $("#"+key).val(parseInt(obj[key]));
                     } else if (key.endsWith("__bool")) {
                         $("#"+key).prop("checked", obj[key]);
+                    } else if (key.endsWith("__title")) {
+                        //Do nothing
                     } else {
                         $("#"+key).val(obj[key]);
                         $("#"+key).height(0);
@@ -204,7 +211,6 @@ function setUI(obj, dontRebuildArray) {
     }
 }
 function getUI(obj) {
-    alert();
     $(".field").each(function(){
         var elmtId = $(this).attr("id");
         if (elmtId == Object.keys(obj)[0]) {
