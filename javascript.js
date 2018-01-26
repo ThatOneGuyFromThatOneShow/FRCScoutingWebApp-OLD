@@ -10,19 +10,43 @@
 
 function MatchInfo(number) {
     this.match_number__num = number;
-    this.points__num = 0;
-    this.notes = "";
-    this.bool_test__bool = false;
-    this.number_test__num = 0;
+    this.auto__title = "Autonomous: "
+    this.Scored_In_Switch__bool = false;
+    this.Scored_In_Scale__bool = false;
+    this.Scored_In_Portal__bool = false;
+    this.Crossed_Line__bool = false;
+    this.teleop__title = "Teleop: ";
+    this.Blocks_In_Alliance_Switch__num = 0;
+    this.Blocks_In_Opponent_Scale__num = 0;
+    this.Blocks_In_Opponent_Switch__num = 0;
+    this.Blocks_In_Portal__num = 0;
+    this.endgame__title = "End Game:";
+    this.Hung__bool = false;
+    this.Raised_Others__bool = false;
+    this.other_result__title = "Result: ";
+    this.Won__bool = false;
+    this.Total_Score__num = 0;
+    this.other__title = "Other: ";
+    this.Notes = "";
 }
-function Team(number, ball_shooting__num, ball_dumping__bool, gear_colection, notes) {
+function Team(number) {
     this.number = number || 0;
     this.auto__title = "Autonomous: ";
-    this.ball_shooting__num = ball_shooting__num || 0;
-    this.ball_dumping__bool = ball_dumping__bool || false;
-    this.gear_colection = gear_colection || "";
-    this.notes = notes || "";
-    this.matches__match = [];
+    this.Crosses_Line__bool = false;
+    this.Scores_Block_Switch__bool = false;
+    this.Scores_Block_Scale__bool = false;
+    this.Scores_Block_Portal__bool = false;
+    this.teleop__title = "Teleop: ";
+    this.Blocks_In_Alliance_Switch__bool = false;
+    this.Blocks_In_Scale__bool = false;
+    this.Blocks_In_Opponent_Switch__bool = false;
+    this.Blocks_In_Portal__bool = false;
+    this.endgame__title = "End Game: ";
+    this.Hang__bool = false;
+    this.Can_Raise_Others__bool = false;
+    this.other__title = "Other: ";
+    this.Notes = "";
+    this.Matches__match = [];
 }
 //Returns length of array excluding  null values
 function arrayLengthWithoutNull(array) {
@@ -79,30 +103,36 @@ function setMatchList(matchList, obj) {
                 var elmt;
                 if (key.endsWith("__bool")) {
                     var elmtName = key.replace("__bool", "");
-                    elmtName = elmtName.replace("_", " ");
+                    elmtName = elmtName.replace(/_/g, " ");
                     elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='checkbox' >");
                 } else if (key.endsWith("__num")) {
                     var elmtName = key.replace("__num", "");
-                    elmtName = elmtName.replace("_", " ");
+                    elmtName = elmtName.replace(/_/g, " ");
                     elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='number' >");
+                } else if (key.endsWith("__title")) {
+                    elmt = $("<span class='title autoGen'><h2 class='titleText' id='"+elmtId+"'>"+keyValue+"</h2></span>");
                 } else {
-                    elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace("_", " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
+                    elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace(/_/g, " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
                     elmt.keydown(function(){
                         $(this).height(0);
                         $(this).height($(this)[0].scrollHeight);
                     });
                 }
                 $("#_"+matchList).append(elmt);
-                $("#"+elmtId).change(function(){
-                    var valId = $(this).prop("id");
-                    valId = valId.substring(valId.lastIndexOf("-")+1);
-                    setTeamInfo(matchList, parseInt(matchSelected)-1, valId);
-                });
+                if (!key.endsWith("__title")) {
+                    $("#"+elmtId).change(function(){
+                        var valId = $(this).prop("id");
+                        valId = valId.substring(valId.lastIndexOf("-")+1);
+                        setTeamInfo(matchList, parseInt(matchSelected)-1, valId);
+                    });
+                    }
                 
                 if (key.endsWith("__num")) {
                     $("#"+elmtId).val(parseInt(keyValue));
                 } else if (key.endsWith("__bool")) {
                     $("#"+elmtId).prop("checked", keyValue);
+                } else if (key.endsWith("__title")) {
+                    //Do nothing
                 } else {
                     $("#"+elmtId).val(keyValue);
                     $("#"+elmtId).height(0);
@@ -144,7 +174,7 @@ function setUI(obj, dontRebuildArray) {
                         $("#"+key+"Span").remove();
                         $("#_"+key).remove();
                         $("#inputs").append("<div id='_"+key+"' class='matchDiv'></div>");
-                        var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("__match", "").replace("_", " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
+                        var elmt = $("<span id='"+key+"Span' class='lable autoGen'>"+key.replace("__match", "").replace(/_/g, " ")+": </span><select id='"+key+"' class='matches autoGen'><option selected value> --- no match selected --- </option><option value='newMatch'>New Match</option></select>");
                         $("#_"+key).append(elmt);
                         forEachObject(obj[key], function(obj, i) {
                             var inKey = obj[Object.keys(obj)[0]];
@@ -169,17 +199,17 @@ function setUI(obj, dontRebuildArray) {
                         var elmtType = "";
                         if (key.endsWith("__num")) {
                             var elmtName = key.replace("__num", "");
-                            elmtName = elmtName.replace("_", " ");
+                            elmtName = elmtName.replace(/_/g, " ");
                             elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='number' >");
                         } else if (key.endsWith("__bool")) {
                             var elmtName = key.replace("__bool", "");
-                            elmtName = elmtName.replace("_", " ");
+                            elmtName = elmtName.replace(/_/g, " ");
                             elmt = $("<span class='lable autoGen'>"+elmtName+": </span><input id='"+key+"' class='field autoGen' type='checkbox' >");
                         } else if (key.endsWith("__title")) {
-                            elmt = $("<span class='lable autoGen'><h2 id='"+key+"' style='margin: 0px;'>"+obj[key]+"</21></span>");
+                            elmt = $("<span class='title autoGen'><h2 class='titleText' id='"+key+"'>"+obj[key]+"</h2></span>");
                         } else {
-                            var elmtName = key.replace("_", " ");
-                            var elmt = $("<span class='lable autoGen title'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
+                            var elmtName = key.replace(/_/g, " ");
+                            var elmt = $("<span class='lable autoGen'>"+elmtName+": </span><textarea id='"+key+"' class='field autoGen' />");
                             elmt.keydown(function(){
                                 $(this).height(0);
                                 $(this).height($(this)[0].scrollHeight);
