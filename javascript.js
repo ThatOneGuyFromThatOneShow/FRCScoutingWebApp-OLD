@@ -1,9 +1,7 @@
 /* TODO:
 * Add Support for radio buttons (Add to main selection, match, and sorting function)
 * DOCUMENT CODE!!!
-* Add support for header text?
-* Finish sorting function
-* Finish sorting page
+* Redo UI on sorting page
 *
 * WARNING when sorting matches the sorting will stop if there is a null match
 */
@@ -104,15 +102,15 @@ function setMatchList(matchList, obj) {
                 if (key.endsWith("__bool")) {
                     var elmtName = key.replace("__bool", "");
                     elmtName = elmtName.replace(/_/g, " ");
-                    elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='checkbox' >");
+                    elmt = $("<span class='matchLable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='matchField autoGen matchAutoGen' type='checkbox' >");
                 } else if (key.endsWith("__num")) {
                     var elmtName = key.replace("__num", "");
                     elmtName = elmtName.replace(/_/g, " ");
-                    elmt = $("<span class='lable autoGen matchAutoGen'>"+elmtName+": </span><input id='"+elmtId+"' class='field autoGen matchAutoGen' type='number' >");
+                    elmt = $("<span class='matchLable autoGen matchAutoGen numLable'>"+elmtName+": </span><input id='"+elmtId+"' class='matchField autoGen matchAutoGen' type='number' >");
                 } else if (key.endsWith("__title")) {
-                    elmt = $("<span class='title autoGen'><h2 class='titleText' id='"+elmtId+"'>"+keyValue+"</h2></span>");
+                    elmt = $("<span class='title autoGen matchAutoGen'><h2 class='titleText' id='"+elmtId+"'>"+keyValue+"</h2></span>");
                 } else {
-                    elmt = $("<span class='matchLable autoGen matchAutoGen'>"+key.replace(/_/g, " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
+                    elmt = $("<span class='matchLable autoGen matchAutoGen textLable'>"+key.replace(/_/g, " ")+": </span><textarea id='"+elmtId+"' class='matchField autoGen matchAutoGen'><textarea>");
                     elmt.keydown(function(){
                         $(this).height(0);
                         $(this).height($(this)[0].scrollHeight);
@@ -522,21 +520,33 @@ function sortData(arr1, arr2) {
                 var displayName = objKey;
                 if (displayName.includes("__"))
                     displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
-                displayName = displayName.replace("_", "");
+                displayName = displayName.replace(/_/g, " ");
                 if (Array.isArray(dataSorted[key][objKey])) {
-                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+" : </div></div></div><div/>"));
+                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+": </div></div></div><div/>"));
                     //alert(JSON.stringify(dataSorted[key][objKey]));
                     for (mKey in dataSorted[key][objKey]) {
                         $("#sorted_"+key+objKey).append($("<div class='aGen' style='margin: 10px;'><div id='sorted_"+key+objKey+mKey+"' style='border-style: solid; border-color: red; background: #e4e4e4; border-width: 1px; display: block;'></div></div><div/>"));
                         for (nKey in dataSorted[key][objKey][mKey]) {
-                            //alert();
-                            $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #eaeaea; border-width: 1px; display: flex;'><div style='width: 130px; display: inline-block; float: left; margin: 5px;'>"+nKey+" : </div><div style='float: left; text-align: right; display: inline-block; width: 180px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</div></div></div><div/>"));
+                            disName = nKey;
+                            if (disName.includes("__")) {
+                                disName = disName.replace(disName.substring(disName.indexOf("__")), "");
+                            }
+                            if (nKey.endsWith("__title")) {
+                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='display: flex;'><h2 style='margin-left: 20px; margin-top: 5px; margin-bottom: 0px;'>"+dataSorted[key][objKey][mKey][nKey]+"</h2></div></div>"));
+                            } else {
+                                disName = disName.replace(/_/g, " ");
+                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #eaeaea; border-width: 1px; display: flex;'><div style='width: 130px; display: inline-block; float: left; margin: 5px;'>"+disName+": </div><div style='float: left; text-align: right; display: inline-block; width: 305px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</div></div></div><div/>"));
+                            }
                         }
                     }
                     
                     //("<div style='float: left; text-align: left; display: block; width: 360px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div>")
                 } else {
-                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+" : </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));  
+                    if (objKey.endsWith("__title")) {
+                        $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='display: flex;'><div style='width: 100%; display: inline-block; float: left; margin: 5px;'><h2 style='margin-left: 20px; margin-top: 5px; margin-bottom: 0px;'>"+(dataSorted[key][objKey])+"<h2></div><div/>"));  
+                    } else {
+                        $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+": </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));  
+                    }
                 }
             }
         }

@@ -8,13 +8,14 @@ input[type=button] {
 }
 input[type=number] {
     height: 19px;
+    text-align: center;
 }
 #submitButton {
     margin-left: 10px;
 }
 .autoGen, #number {
     display: inline-flex;
-    float: left;
+    float: right;
     margin-top: 0px;
     margin-left: 0px;
     margin-right: 0px;
@@ -23,11 +24,12 @@ input[type=number] {
 .lable, .matchLable {
     float: left;
     clear: left;
-    width: 150px;
+    width: 30%;
+    min-width: 150px;
     text-align: left;
-    padding-left: 10px;
+    padding-left: 1%;
     padding-top: 1px;
-    margin-left: 10px;
+    margin-left: 1%;
     color: white;
     font-size: 20px;
 }
@@ -44,43 +46,45 @@ input[type=number] {
 }
 .titleText {
     margin: 10px;
+    color: #525252;
 }
 .field, .matchField {
-    float: left;
-    width: 350px;
+    float: right;
+    width: 67%;
+    min-width: 350px;
     resize: none;
     overflow: hidden;
 }
 .matches {
-    float: left;
-    width: 350px;
+    float: right;
+    min-width: 350px;
+    width: 67%;
     height: 30px;
-    padding-left: 15px;
+    padding-left: 1%;
 }
 .matchDiv {
     float: left;
     clear: left;
-    padding: 10px;
+    padding: 1%;
     padding-left: 0px;
     border-style: solid;
     border-color: aqua;
     border-width: 2px;
     background-color: lightgray;
-    margin-bottom: 10px;
+    width: 98%;
 }
 .matchDelete {
-    clear: left;
     float: left;
-    margin-left: 325px;
+    margin-left: 2%;
 }
 .matchSubmit {
-    float: left;
-    margin-left: 10px;
+    clear: right;
+    float: right;
+    margin-right: 1%;
 }
 .matchCreate {
-    clear: left;
-    float: left;
-    margin-left: 450px;
+    clear: right;
+    float: right;
 }
 .number {
     text-align: center;
@@ -96,9 +100,13 @@ input[type=number] {
     border-color: aqua;
     border-width: 2px;
     background-color: lightgray;
-    margin-bottom: 10px;
+    margin: 2%;
     padding: 10px;
     text-align: left;
+    position: absolute;
+    left: 1%;
+    right: 1%;
+    width: 500px;
 }
 #table {
     width: auto;
@@ -112,5 +120,62 @@ input[type=number] {
     border-color: aqua;
     border-width: 2px;
     border-style: solid;
-    padding: 10px;
+    padding: 1%;
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    margin-bottom: 10px;
+    max-width: 800px;
+}
+@media screen and (max-width: 500px) {
+    #number {
+        min-width: 0%;
+        width: 98.5%;
+    }
+    .field {
+        float: right;
+        width: 98.5%;
+    }
+    .matchField {
+        width: 97.5%;
+    }
+    .matchField[type=number] {
+        width: 98%;
+    }
+    .field[type='checkbox'] , .matchField[type='checkbox'] {
+        float: right;
+        width: 20%;
+        max-width: 100px;
+        min-width: 20px;
+        margin-top: 6px;
+    }
+    .lable, .matchLable {
+        width: 70%;
+        min-width: 200px;
+        padding-left: 0px;
+        padding-top: 1px;
+        margin-left: 0px;
+        color: white;
+        font-size: 20px;
+    }
+    .matchLable {
+        margin-left: 1%;
+    }
+    .matchLable.textLable, .matchLable.numLable {
+        width: 99%;
+    }
+    .title {
+        float: left;
+        clear: left;
+        width: 70%;
+        text-align: left;
+        padding-left: 1%;
+        padding-top: 1px;
+        margin-left: 1%;
+        color: white;
+        font-size: 20px;
+    }
+    .matches {
+        width: 99%;
+    }
 }
