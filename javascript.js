@@ -9,8 +9,8 @@
 */
 
 function MatchInfo(number) {
-    this.match_number = number;
-    this.points = "";
+    this.match_number__num = number;
+    this.points__num = 0;
     this.notes = "";
     this.bool_test__bool = false;
     this.number_test__num = 0;
@@ -204,6 +204,7 @@ function setUI(obj, dontRebuildArray) {
     }
 }
 function getUI(obj) {
+    alert();
     $(".field").each(function(){
         var elmtId = $(this).attr("id");
         if (elmtId == Object.keys(obj)[0]) {
@@ -217,6 +218,7 @@ function getUI(obj) {
         }
     });
     $(".matches").each(function(){
+        //alert();
         for (var key in obj[$(this).attr("id")]) {
             for (var val in obj[$(this).attr("id")][key]) {
                 var matchNumber = parseInt(key) + 1;
@@ -226,7 +228,7 @@ function getUI(obj) {
                     if (elmtId.endsWith("__bool")) {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).prop("checked");
                     } else if (elmtId.endsWith("__num")) {
-                        obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
+                        obj[$(this).attr("id")][key][val] = parseInt($("#"+elmtId).val());
                     } else {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
                     }
@@ -327,7 +329,7 @@ function getAllTeamInfo(callback) {
 }
 function sortMatches(arr, valPath, valArgs) {
     /*
-    To sort matches use an array of the field and match field to sort. Ex: ["matches__match", "match_number"]
+    To sort matches use an array of the field and match field to sort. Ex: ["matches__match", "match_number__num"]
     Sort options are seperated by a -- you can use avg, sLow, and sHigh. Ex: avg--sLow
     */
     var makeAvg = [];
@@ -341,16 +343,21 @@ function sortMatches(arr, valPath, valArgs) {
             valArgs[key] = "";
     }
     for (key in valArgs) {
-        makeAvg[key] = false;
-        sortHigh[key] = true;
-        var args = valArgs[key].split("--");
-        for (argKey in args) {
-            if (valArgs[key] == "avg") {
-                makeAvg[key] = true;
-            } else if (valArgs[key] == "sLow") {
-                sortHigh[key] = false;
-            } else if (valArgs[key] == "sHigh") {
-                sortHigh[key] = true;
+        if (Array.isArray(valArgs[key])) {
+            sortHigh[key] = valArgs[key][0];
+            makeAvg[key] = valArgs[key][1];
+        } else {
+            makeAvg[key] = false;
+            sortHigh[key] = true;
+            var args = valArgs[key].split("--");
+            for (argKey in args) {
+                if (valArgs[key] == "avg") {
+                    makeAvg[key] = true;
+                } else if (valArgs[key] == "sLow") {
+                    sortHigh[key] = false;
+                } else if (valArgs[key] == "sHigh") {
+                    sortHigh[key] = true;
+                }
             }
         }
     }
@@ -414,15 +421,35 @@ function sortMatches(arr, valPath, valArgs) {
     return(arr);
 }
 function createNewSortArgs() {
-    $("#sortingArgs").append($("<div style='display: inline-block; padding-right: 20px;' id='sortSpan"+sortingArgs.length+"' style='padding: 5px;'><div><select id='sortOpt"+sortingArgs.length+"' ><option selected value> --- select option to sort --- </option></select></div></div>"));
+    $("#sortingPaths").append($("<div style='display: inline-block; padding-right: 20px;' id='sortSpan"+sortingPaths.length+"' style='padding: 5px;'></div>"));
+    $("#sortSpan"+sortingPaths.length).append($("<div><span style='padding-right: 30px; padding-left: 8px;' >Low: <input type=checkbox id='sortLow"+sortingPaths.length+"'></span><span>Average: <input type=checkbox id='sortAvg"+sortingPaths.length+"'></spam></div>"));
+    $("#sortLow"+sortingPaths.length).change(function(){
+        var tmpId = $(this).attr("id").replace("sortLow", "");
+        sortingArgs[tmpId][0] = !$(this).prop("checked");
+        //alert(sortingArgs[tmpId]);
+    });
+    $("#sortAvg"+sortingPaths.length).change(function(){
+        var tmpId = $(this).attr("id").replace("sortAvg", "");
+        sortingArgs[tmpId][1] = $(this).prop("checked");
+        //alert(sortingArgs[tmpId]);
+    });
+    sortingArgs[sortingPaths.length] = [true, true];
+    //alert(JSON.stringify(sortingArgs));
+    
+    $("#sortSpan"+sortingPaths.length).append($("<div><select id='sortOpt"+sortingPaths.length+"' ><option selected value> --- select option to sort --- </option></select></div>"));
     for (key in team) {
-        $("#sortOpt"+sortingArgs.length).append($("<option>"+key+"</option>"));
+        $("#sortOpt"+sortingPaths.length).append($("<option>"+key+"</option>"));
     };
-    $("#sortOpt"+sortingArgs.length).change(function(){
+    $("#sortOpt"+sortingPaths.length).change(function(){
         var tmpId = $(this).attr("id").replace("sortOpt", "");
-        var oldValue = sortingArgs[tmpId] || "";
+        var oldValue = sortingPaths[tmpId] || "";
         var newValue = $(this).val();
-        sortingArgs[tmpId] = newValue;
+        sortingPaths[tmpId] = newValue;
+
+        if (Array.isArray(oldValue)) {
+            //alert();
+            $("#matchVal"+tmpId).remove();
+        }
         if (Array.isArray(team[newValue])) {
             $("#sortSpan"+tmpId).append($("<div style='display: table'><select id='matchVal"+tmpId+"' ></select></div>"));
             for (key in new MatchInfo()) {
@@ -431,19 +458,17 @@ function createNewSortArgs() {
             $("#matchVal"+tmpId).change(function(){
                 var tempId = $(this).attr("id").replace("matchVal", "");
                 var outer = $("#sortOpt"+tempId).val();
-                sortingArgs[tempId] = [outer, $(this).val()];
+                sortingPaths[tempId] = [outer, $(this).val()];
             });
-            sortingArgs[tmpId] = [newValue, $("#matchVal"+tmpId).val()];
-        } else if (Array.isArray(team[oldValue])) {
-            $("#matchVal"+tmpId).remove();
+            sortingPaths[tmpId] = [newValue, $("#matchVal"+tmpId).val()];
         }
         
-        if (oldValue === "" && parseInt(tmpId)+1 === sortingArgs.length) {
+        if (oldValue === "" && parseInt(tmpId)+1 === sortingPaths.length) {
             createNewSortArgs();
-        } else if (newValue === "" && parseInt(tmpId)+1 === sortingArgs.length) {
-            $("#sortOpt"+sortingArgs.length).remove();
-            $("#sortSpan"+sortingArgs.length).remove();
-            sortingArgs = sortingArgs.slice(0, -1);
+        } else if (newValue === "" && parseInt(tmpId)+1 === sortingPaths.length) {
+            $("#sortOpt"+sortingPaths.length).remove();
+            $("#sortSpan"+sortingPaths.length).remove();
+            sortingPaths = sortingPaths.slice(0, -1);
         }
         //sortingArgs[sortingArgs.length] = "";
         //alert(JSON.stringify(sortingArgs));
@@ -482,12 +507,13 @@ function sortData(arr1, arr2) {
     });
 }
 var team = new Team();
+var sortingPaths = [];
 var sortingArgs = [];
 
 function onLoad() {
     //deleteUI();
-    $("body").append($("<div id='sortingArgs' style='padding-bottom: 20px;' />"));
-    $("body").append($("<div style='padding-bottom: 20px;'><input id='sortTeams' type='button' value='Sort Teams' onclick='sortData(sortingArgs);'></div>"));
+    $("body").append($("<div id='sortingPaths' style='padding-bottom: 20px;' />"));
+    $("body").append($("<div style='padding-bottom: 20px;'><input id='sortTeams' type='button' value='Sort Teams' onclick='sortData(sortingPaths, sortingArgs);'></div>"));
     createNewSortArgs();
     //sortData([["matches__match","number_test__num"]], ["sHigh"]);
 }
