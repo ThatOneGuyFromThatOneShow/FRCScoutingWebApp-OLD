@@ -102,6 +102,7 @@ input[type=number] {
 .container {
     width: 100%;
 }
+
 .sortedTeam {
     display: block;
     clear: left;
@@ -113,11 +114,15 @@ input[type=number] {
     margin: 2%;
     padding: 10px;
     text-align: left;
-    position: absolute;
+    position: relative;
     left: 1%;
     right: 1%;
     width: 500px;
 }
+.sortedMatch {
+    margin: 5px;
+}
+
 #table {
     width: auto;
     margin-left: auto;

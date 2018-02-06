@@ -1,9 +1,9 @@
 /* TODO:
 * Add Support for radio buttons (Add to main selection, match, and sorting function)
 * DOCUMENT CODE!!!
-* Redo UI on sorting page
 *
-* WARNING when sorting matches the sorting will stop if there is a null match
+* Redo UI on sorting page
+*  (completey remake generation of sorting page)
 */
 
 function MatchInfo(number) {
@@ -472,7 +472,8 @@ function createNewSortArgs() {
     
     $("#sortSpan"+sortingPaths.length).append($("<div><select id='sortOpt"+sortingPaths.length+"' ><option selected value> --- select option to sort --- </option></select></div>"));
     for (key in team) {
-        $("#sortOpt"+sortingPaths.length).append($("<option>"+key+"</option>"));
+        if (!key.endsWith("__title"))
+            $("#sortOpt"+sortingPaths.length).append($("<option>"+key+"</option>"));
     };
     $("#sortOpt"+sortingPaths.length).change(function(){
         var tmpId = $(this).attr("id").replace("sortOpt", "");
@@ -487,7 +488,8 @@ function createNewSortArgs() {
         if (Array.isArray(team[newValue])) {
             $("#sortSpan"+tmpId).append($("<div style='display: table'><select id='matchVal"+tmpId+"' ></select></div>"));
             for (key in new MatchInfo()) {
-                $("#matchVal"+tmpId).append($("<option>"+key+"</option>"));
+                if (!key.endsWith("__title"))
+                    $("#matchVal"+tmpId).append($("<option>"+key+"</option>"));
             }
             $("#matchVal"+tmpId).change(function(){
                 var tempId = $(this).attr("id").replace("matchVal", "");
@@ -522,7 +524,7 @@ function sortData(arr1, arr2) {
                     displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
                 displayName = displayName.replace(/_/g, " ");
                 if (Array.isArray(dataSorted[key][objKey])) {
-                    $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+": </div></div></div><div/>"));
+                    $("#div_"+key).append($("<div class='aGen sortedMatch'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+": </div></div></div><div/>"));
                     //alert(JSON.stringify(dataSorted[key][objKey]));
                     for (mKey in dataSorted[key][objKey]) {
                         $("#sorted_"+key+objKey).append($("<div class='aGen' style='margin: 10px;'><div id='sorted_"+key+objKey+mKey+"' style='border-style: solid; border-color: red; background: #e4e4e4; border-width: 1px; display: block;'></div></div><div/>"));
