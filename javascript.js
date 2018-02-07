@@ -470,10 +470,15 @@ function createNewSortArgs() {
     sortingArgs[sortingPaths.length] = [true, true];
     //alert(JSON.stringify(sortingArgs));
     
-    $("#sortSpan"+sortingPaths.length).append($("<div><select id='sortOpt"+sortingPaths.length+"' ><option selected value> --- select option to sort --- </option></select></div>"));
+    $("#sortSpan"+sortingPaths.length).append($("<div><select class='sortDropdown' id='sortOpt"+sortingPaths.length+"' ><option selected> --- select option to sort --- </option></select></div>"));
     for (key in team) {
-        if (!key.endsWith("__title"))
-            $("#sortOpt"+sortingPaths.length).append($("<option>"+key+"</option>"));
+        if (!key.endsWith("__title")) {
+            var displayName = key;
+            if (displayName.includes("__"))
+                displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
+            displayName = displayName.replace(/_/g, " ");
+            $("#sortOpt"+sortingPaths.length).append($("<option value='"+key+"'>"+displayName+"</option>"));
+        }
     };
     $("#sortOpt"+sortingPaths.length).change(function(){
         var tmpId = $(this).attr("id").replace("sortOpt", "");
@@ -486,10 +491,14 @@ function createNewSortArgs() {
             $("#matchVal"+tmpId).remove();
         }
         if (Array.isArray(team[newValue])) {
-            $("#sortSpan"+tmpId).append($("<div style='display: table'><select id='matchVal"+tmpId+"' ></select></div>"));
+            $("#sortSpan"+tmpId).append($("<div style='display: table'><select class='sortDropdown' id='matchVal"+tmpId+"' ></select></div>"));
             for (key in new MatchInfo()) {
+                var displayName = key;
+                if (displayName.includes("__"))
+                    displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
+                    displayName = displayName.replace(/_/g, " ");
                 if (!key.endsWith("__title"))
-                    $("#matchVal"+tmpId).append($("<option>"+key+"</option>"));
+                    $("#matchVal"+tmpId).append($("<option value='"+key+"'>"+displayName+"</option>"));
             }
             $("#matchVal"+tmpId).change(function(){
                 var tempId = $(this).attr("id").replace("matchVal", "");
@@ -515,6 +524,7 @@ function sortData(arr1, arr2) {
     deleteUI();
     getAllTeamInfo(function(data){
         var dataSorted = sortMatches(data, arr1, arr2);
+        globalSortedData = dataSorted;
         for (key in dataSorted) {
             //Create new team div
             $("#sortedTeams").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
@@ -523,9 +533,53 @@ function sortData(arr1, arr2) {
                 if (displayName.includes("__"))
                     displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
                 displayName = displayName.replace(/_/g, " ");
+                
+                //Creates the match view section
                 if (Array.isArray(dataSorted[key][objKey])) {
-                    $("#div_"+key).append($("<div id='sorted_"+key+objKey+"' class='sortedMatchList'><div class='sortedMatchNumber'>"+displayName+": </div></div>"));
-                    //alert(JSON.stringify(dataSorted[key][objKey]));
+                    $("#div_"+key).append($("<div id='sorted_"+key+objKey+"' class='sortedMatchList'><span class='sortedMatchNumber'>"+displayName+": </span><select class='displayMatchDropdown' id='matchSelect_"+key+"---"+objKey+"' ></select></div>"));
+                    
+                    //Creates the match drop down list
+                    $("#matchSelect_"+key+"---"+objKey).append($("<option value='__null__' selected>--- Select Match ---</option>"));
+                    for (mKey in dataSorted[key][objKey]) {
+                        matchNumber = JSON.stringify(dataSorted[key][objKey][mKey][Object.keys(new MatchInfo())[0]]);
+                        $("#matchSelect_"+key+"---"+objKey).append($("<option value='"+(matchNumber-1)+"'>Match: "+matchNumber+"</option>"));
+                    }
+                    
+                    //When match is selected open display match
+                    $("#matchSelect_"+key+"---"+objKey).change(function(){
+                        var keyAndObjKey = $(this).attr("id").replace("matchSelect_", "").split("---");
+                        var key = keyAndObjKey[0];
+                        var objKey = keyAndObjKey[1];
+                        var mKey = $(this).val();
+                        var dataSorted = globalSortedData;
+                        
+                        //alert(mKey);
+                        
+                        //$("#sorted_"+key+objKey+mKey).remove();
+                        $(".sorted_"+key+objKey).remove();
+                        
+                        if (mKey != "__null__")
+                            $("#sorted_"+key+objKey).append($("<div class='sorted_"+key+objKey+" aGen sortedMatch' id='sorted_"+key+objKey+mKey+"'></div>"));
+                        
+                        for (nKey in dataSorted[key][objKey][mKey]) {
+                            disName = nKey;
+                            if (disName.includes("__")) {
+                                disName = disName.replace(disName.substring(disName.indexOf("__")), "");
+                            }
+                            if (nKey.endsWith("__title")) {
+                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen sortedTitle'><h2>"+dataSorted[key][objKey][mKey][nKey]+"</h2></div>"));
+                            } else if (nKey == Object.keys(new MatchInfo)[0]) {
+                                //$("#sorted_"+key+objKey+mKey).append($("<div class='sortedMatchTitle'><h2>Match "+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</h2></div>"));
+                            } else {    
+                                disName = disName.replace(/_/g, " ");
+                                $("#sorted_"+key+objKey+mKey).append($("<div style='display: flex'><span class='sortedLable'>"+disName+": </span><span class='sortedField'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</span></div>"));
+                            }
+                        }
+                        
+                    });
+                    
+                    
+                    /*
                     for (mKey in dataSorted[key][objKey]) {
                         $("#sorted_"+key+objKey).append($("<div id='sorted_"+key+objKey+mKey+"' class='aGen sortedMatch'></div>"));
                         for (nKey in dataSorted[key][objKey][mKey]) {
@@ -543,6 +597,10 @@ function sortData(arr1, arr2) {
                             }
                         }
                     }
+                    */
+                    
+                    
+                    
                 } else {
                     if (objKey.endsWith("__title")) {
                         $("#div_"+key).append($("<h2 class='sortedTitle'>"+(dataSorted[key][objKey])+"</h2>"));  
@@ -559,6 +617,7 @@ function sortData(arr1, arr2) {
 var team = new Team();
 var sortingPaths = [];
 var sortingArgs = [];
+var globalSortedData = [];
 
 function onLoad() {
     createNewSortArgs();
