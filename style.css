@@ -157,7 +157,10 @@ input[type=number] {
     text-align: center;
 }
 .sortDropdown {
-    
+    width: 100%;
+    margin-top: 6px;
+    height: 25px;
+    text-align: center;
 }
 .displayMatchDropdown {
     width: 50%;
@@ -167,6 +170,11 @@ input[type=number] {
     height: 25px;
     text-align: center;
     margin-right: 2%;
+}
+.dropdownDiv {
+    display: inline-grid;
+    padding: 0.5%;
+    width: 32.3%;
 }
 
 
@@ -189,7 +197,7 @@ input[type=number] {
     margin-bottom: 10px;
     max-width: 800px;
 }
-@media screen and (max-width: 580px) {
+@media screen and (max-width: 600px) {
     #number {
         min-width: 0%;
         width: 98.5%;
@@ -239,5 +247,10 @@ input[type=number] {
     }
     .matches {
         width: 99%;
+    }
+    .dropdownDiv {
+    display: inline-block;
+    padding: 0.5%;
+    width: 99%;
     }
 }

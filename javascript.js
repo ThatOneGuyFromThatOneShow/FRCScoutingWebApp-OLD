@@ -455,8 +455,8 @@ function sortMatches(arr, valPath, valArgs) {
     return(arr);
 }
 function createNewSortArgs() {
-    $("#sortingPaths").append($("<div style='display: inline-block; padding-right: 20px;' id='sortSpan"+sortingPaths.length+"' style='padding: 5px;'></div>"));
-    $("#sortSpan"+sortingPaths.length).append($("<div><span style='padding-right: 30px; padding-left: 8px;' >Low: <input type=checkbox id='sortLow"+sortingPaths.length+"'></span><span>Average: <input type=checkbox id='sortAvg"+sortingPaths.length+"'></spam></div>"));
+    $("#sortingPaths").append($("<div class='dropdownDiv' id='sortSpan"+sortingPaths.length+"'></div>"));
+    $("#sortSpan"+sortingPaths.length).append($("<div><span>Low: <input type=checkbox id='sortLow"+sortingPaths.length+"'></span><span style='float: right'>Average: <input type=checkbox id='sortAvg"+sortingPaths.length+"'></spam></div>"));
     $("#sortLow"+sortingPaths.length).change(function(){
         var tmpId = $(this).attr("id").replace("sortLow", "");
         sortingArgs[tmpId][0] = !$(this).prop("checked");
@@ -491,7 +491,7 @@ function createNewSortArgs() {
             $("#matchVal"+tmpId).remove();
         }
         if (Array.isArray(team[newValue])) {
-            $("#sortSpan"+tmpId).append($("<div style='display: table'><select class='sortDropdown' id='matchVal"+tmpId+"' ></select></div>"));
+            $("#sortSpan"+tmpId).append($("<div><select class='sortDropdown' id='matchVal"+tmpId+"' ></select></div>"));
             for (key in new MatchInfo()) {
                 var displayName = key;
                 if (displayName.includes("__"))
