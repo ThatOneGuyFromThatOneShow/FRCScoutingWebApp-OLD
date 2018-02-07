@@ -515,39 +515,41 @@ function sortData(arr1, arr2) {
     deleteUI();
     getAllTeamInfo(function(data){
         var dataSorted = sortMatches(data, arr1, arr2);
-        //alert(JSON.stringify(dataSorted));
         for (key in dataSorted) {
-            $("body").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
+            //Create new team div
+            $("#sortedTeams").append($("<div id='div_"+key+"' class='aGen sortedTeam' />")); 
             for (objKey in dataSorted[key]) {
                 var displayName = objKey;
                 if (displayName.includes("__"))
                     displayName = displayName.replace(displayName.substring(displayName.indexOf("__")), "");
                 displayName = displayName.replace(/_/g, " ");
                 if (Array.isArray(dataSorted[key][objKey])) {
-                    $("#div_"+key).append($("<div class='aGen sortedMatch'><div id='sorted_"+key+objKey+"' style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: table-caption;'><div style='width: 360px; display: block; margin: 5px;'>"+displayName+": </div></div></div><div/>"));
+                    $("#div_"+key).append($("<div id='sorted_"+key+objKey+"' class='sortedMatchList'><div class='sortedMatchNumber'>"+displayName+": </div></div>"));
                     //alert(JSON.stringify(dataSorted[key][objKey]));
                     for (mKey in dataSorted[key][objKey]) {
-                        $("#sorted_"+key+objKey).append($("<div class='aGen' style='margin: 10px;'><div id='sorted_"+key+objKey+mKey+"' style='border-style: solid; border-color: red; background: #e4e4e4; border-width: 1px; display: block;'></div></div><div/>"));
+                        $("#sorted_"+key+objKey).append($("<div id='sorted_"+key+objKey+mKey+"' class='aGen sortedMatch'></div>"));
                         for (nKey in dataSorted[key][objKey][mKey]) {
                             disName = nKey;
                             if (disName.includes("__")) {
                                 disName = disName.replace(disName.substring(disName.indexOf("__")), "");
                             }
                             if (nKey.endsWith("__title")) {
-                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='display: flex;'><h2 style='margin-left: 20px; margin-top: 5px; margin-bottom: 0px;'>"+dataSorted[key][objKey][mKey][nKey]+"</h2></div></div>"));
-                            } else {
+                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen sortedTitle'><h2>"+dataSorted[key][objKey][mKey][nKey]+"</h2></div>"));
+                            } else if (nKey == Object.keys(new MatchInfo)[0]) {
+                                $("#sorted_"+key+objKey+mKey).append($("<div class='sortedMatchTitle'><h2>Match "+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</h2></div>"));
+                            } else {    
                                 disName = disName.replace(/_/g, " ");
-                                $("#sorted_"+key+objKey+mKey).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #eaeaea; border-width: 1px; display: flex;'><div style='width: 130px; display: inline-block; float: left; margin: 5px;'>"+disName+": </div><div style='float: left; text-align: right; display: inline-block; width: 305px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</div></div></div><div/>"));
+                                $("#sorted_"+key+objKey+mKey).append($("<div style='display: flex'><span class='sortedLable'>"+disName+": </span><span class='sortedField'>"+JSON.stringify(dataSorted[key][objKey][mKey][nKey])+"</span></div>"));
                             }
                         }
                     }
-                    
-                    //("<div style='float: left; text-align: left; display: block; width: 360px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div>")
                 } else {
                     if (objKey.endsWith("__title")) {
-                        $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='display: flex;'><div style='width: 100%; display: inline-block; float: left; margin: 5px;'><h2 style='margin-left: 20px; margin-top: 5px; margin-bottom: 0px;'>"+(dataSorted[key][objKey])+"<h2></div><div/>"));  
+                        $("#div_"+key).append($("<h2 class='sortedTitle'>"+(dataSorted[key][objKey])+"</h2>"));  
+                    } else if (objKey == Object.keys(team)[0]) {
+                         $("#div_"+key).append($("<div class='sortedTeamNumber'><h1>Team "+JSON.stringify(dataSorted[key][objKey])+"</h1></div>")); 
                     } else {
-                        $("#div_"+key).append($("<div class='aGen' style='margin: 5px;'><div style='border-style: solid; border-color: darkturquoise; background: #dddddd; border-width: 1px; display: flex;'><div style='width: 150px; display: inline-block; float: left; margin: 5px;'>"+displayName+": </div><div style='float: left; text-align: right; display: inline-block; width: 200px; word-wrap: break-word; margin: 5px;'>"+JSON.stringify(dataSorted[key][objKey])+"</div></div></div><div/>"));  
+                        $("#div_"+key).append($("<div style='display: flex'><span class='sortedLable'>"+displayName+": </span><span class='sortedField'>"+JSON.stringify(dataSorted[key][objKey])+"</span></div>")); 
                     }
                 }
             }
@@ -559,9 +561,6 @@ var sortingPaths = [];
 var sortingArgs = [];
 
 function onLoad() {
-    //deleteUI();
-    $("body").append($("<div id='sortingPaths' style='padding-bottom: 20px;' />"));
-    $("body").append($("<div style='padding-bottom: 20px;'><input id='sortTeams' type='button' value='Sort Teams' onclick='sortData(sortingPaths, sortingArgs);'></div>"));
     createNewSortArgs();
     //sortData([["matches__match","number_test__num"]], ["sHigh"]);
 }

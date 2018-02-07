@@ -9,11 +9,12 @@
         <script type="text/javascript" src="javascript.js"></script>
     </head>
     <body onload="onLoad()">
-        <div>
-            <!--<select id='sortOpt1' onchange="onLoad()" >
-                <option value='test'> --- test ---
-                <option value='test1'>test1
-            </select>-->
+        <div id="teamInfo">
+            <div id='sortingPaths' style='padding-bottom: 20px;'></div>
+            <div style='padding-bottom: 20px;'>
+                <input id='sortTeams' type='button' value='Sort Teams' onclick='sortData(sortingPaths, sortingArgs);'>
+            </div>
+            <div id='sortedTeams'></div>
         </div>
     </body>
 </html>
