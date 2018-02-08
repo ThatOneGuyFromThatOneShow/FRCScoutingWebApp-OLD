@@ -172,7 +172,7 @@ input[type=number] {
     margin-right: 2%;
 }
 .dropdownDiv {
-    display: inline-grid;
+    display: inline-table;
     padding: 0.5%;
     width: 32.3%;
 }
