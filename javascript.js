@@ -2,11 +2,10 @@
 * Add Support for radio buttons (Add to main selection, match, and sorting function)
 * DOCUMENT CODE!!!
 *
-* Fix issue when hitting subbit match the team number field shrinks vertically
 */
 
 function MatchInfo(number) {
-    this.match_number__num = number;
+    this.Match_Number__num = number;
     this.auto__title = "Autonomous: "
     this.Scored_In_Switch__bool = false;
     this.Scored_In_Scale__bool = false;
@@ -443,12 +442,11 @@ function sortMatches(arr, valPath, valArgs) {
                 break;
         }
         //DEFAULT SORT CASE (if all sorts are tied OR no sort options were passed in)
-        if (toReturn == 0) {
-            aVal = a[0];
-            bVal = b[0];
-            toReturn = (bVal - aVal);
+        if (toReturn == 0 || isNaN(toReturn)) {
+            aVal = a[Object.keys(a)[0]];
+            bVal = b[Object.keys(b)[0]];
+            toReturn = (aVal - bVal);
         }
-        //alert(toReturn);
         return toReturn;
     });
     return(arr);
