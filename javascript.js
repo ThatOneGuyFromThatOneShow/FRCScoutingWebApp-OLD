@@ -2,8 +2,7 @@
 * Add Support for radio buttons (Add to main selection, match, and sorting function)
 * DOCUMENT CODE!!!
 *
-* Redo UI on sorting page
-*  (completey remake generation of sorting page)
+* Fix issue when hitting subbit match the team number field shrinks vertically
 */
 
 function MatchInfo(number) {
@@ -28,7 +27,7 @@ function MatchInfo(number) {
     this.Notes = "";
 }
 function Team(number) {
-    this.number = number || 0;
+    this.Number = number || 0;
     this.auto__title = "Autonomous: ";
     this.Crosses_Line__bool = false;
     this.Scores_Block_Switch__bool = false;
@@ -445,9 +444,9 @@ function sortMatches(arr, valPath, valArgs) {
         }
         //DEFAULT SORT CASE (if all sorts are tied OR no sort options were passed in)
         if (toReturn == 0) {
-            aVal = a["number"];
-            bVal = b["number"];
-            toReturn = (aVal - bVal);
+            aVal = a[0];
+            bVal = b[0];
+            toReturn = (bVal - aVal);
         }
         //alert(toReturn);
         return toReturn;
