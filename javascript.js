@@ -276,16 +276,16 @@ function deleteUI() {
     $(".matchDiv").remove();
 }
 function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
-    var teamNumber = $("#number").val();
+    var teamNumber = $("#Number").val();
     getUI(team);
     $.ajax({
         url : 'php/getTeamInfo.php?q=' + teamNumber,
         type : 'GET',
         dataType : "json",
     }).done(function(data){
-        var teamNumber = $("#number").val();
+        var teamNumber = $("#Number").val();
         var dataToSend = data;
-        dataToSend.number = parseInt(teamNumber);
+        dataToSend.Number = parseInt(teamNumber);
         if (matchValChanged !== undefined) {
             dataToSend[valChanged][valChangedInArray][matchValChanged] = team[valChanged][valChangedInArray][matchValChanged];
             team = dataToSend;
@@ -307,9 +307,9 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
             alert("An error has occurred!");
         })
     }).fail(function(){
-        var teamNumber = $("#number").val();
+        var teamNumber = $("#Number").val();
         var dataToSend = team;
-        dataToSend.number = teamNumber;
+        dataToSend.Number = teamNumber;
         setUI(team);
         $.ajax({
             url : 'php/setTeamInfo.php?q=' + teamNumber,
@@ -321,9 +321,9 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
     });
 }
 function setAllTeamInfo() {
-    var teamNumber = $("#number").val();
+    var teamNumber = $("#Number").val();
     var dataToSend = team;
-    dataToSend.number = parseInt(teamNumber);
+    dataToSend.Number = parseInt(teamNumber);
     if (teamNumber != undefined && teamNumber != 0) {
         $.ajax({
             url : 'php/setTeamInfo.php?q=' + teamNumber,
@@ -335,7 +335,7 @@ function setAllTeamInfo() {
     }
 }
 function getTeamInfo() {
-    var teamNumber = $("#number").val();
+    var teamNumber = $("#Number").val();
     $.ajax({
         url : 'php/getTeamInfo.php?q=' + teamNumber,
         type : 'GET',
