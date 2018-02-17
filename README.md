@@ -12,7 +12,6 @@ url = str(sys.argv[1])
 url1 = "http://"+url+"/php/getAllTeams.php"
 url2 = "http://"+url+"/php/setTeamInfo.php?q="
 text = requests.get(url1).text
-text = text.replace(",,", ",").replace("[,", "[").replace(",]", "]")
 
 while text.find(",,") != -1 or text.find("[,") != -1 or text.find(",]") != -1:
     text = text.replace(",,", ",").replace("[,", "[").replace(",]", "]")
