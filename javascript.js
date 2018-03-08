@@ -73,7 +73,7 @@ function setMatchList(matchList, obj) {
     } else if (matchSelected === "newMatch") {
         //OPEN CREATE NEW MATCH UI
         var elmtId = matchList + "-" + matchSelected.toString() + "-" + "newMatchNumber";
-        var elmt = $("<span class='matchLable autoGen matchAutoGen'>Match Number: </span><input id='"+elmtId+"' class='number matchField autoGen matchAutoGen' type='number'>");
+        var elmt = $("<span class='matchLable autoGen matchAutoGen'>Match Number: </span><input id='"+elmtId+"' class='number matchField autoGen matchAutoGen' type='number' disabled>");
         var sugMatchNumber = (arrayLengthWithoutNull(obj[matchList])+1);
         $("#_"+matchList).append(elmt);
         $("#"+elmtId).val(sugMatchNumber);
