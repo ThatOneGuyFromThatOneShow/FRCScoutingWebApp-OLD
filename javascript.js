@@ -140,16 +140,19 @@ function setMatchList(matchList, obj) {
 //                $("#"+elmtId).height($("#"+elmtId)[0].scrollHeight);
             }
         }
-        $("#_"+matchList).append($("<button id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete'>Delete Match</button>"));
-        $("#delete_"+matchList).click(function(){
-            if(confirm("You are about to delete all the data for match: "+matchSelected+".\nAre you sure you would like to continue?")){
-                delete obj[matchList][matchSelected-1];
-                $("#"+matchList+" option[value='"+matchSelected+"']").remove();
-                $("#"+matchList).val("");
-                setMatchList(matchList, matchSelected);
-                setTeamInfo(matchList, (matchSelected-1));
-            }
-        });
+		
+		if (matchSelected == obj[matchList].length) {
+			$("#_"+matchList).append($("<button id='delete_"+matchList+"' class='autoGen matchAutoGen matchDelete'>Delete Match</button>"));
+			$("#delete_"+matchList).click(function(){
+				if(confirm("You are about to delete all the data for match: "+matchSelected+".\nAre you sure you would like to continue?")){
+					obj[matchList].pop();
+					$("#"+matchList+" option[value='"+matchSelected+"']").remove();
+					//$("#"+matchList).val("");
+					setTeamInfo(matchList);
+				}
+			});
+		}
+		
         $("#_"+matchList).append($("<button id='submit_"+matchList+"' class='autoGen matchAutoGen matchSubmit'>Submit Match</button>"));
         $("#submit_"+matchList).click(function(){
             setTeamInfo(matchList, String(matchSelected-1));
