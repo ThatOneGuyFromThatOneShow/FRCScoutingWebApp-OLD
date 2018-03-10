@@ -468,7 +468,7 @@ function createNewSortArgs() {
         sortingArgs[tmpId][1] = $(this).prop("checked");
         //alert(sortingArgs[tmpId]);
     });
-    sortingArgs[sortingPaths.length] = [true, true];
+    sortingArgs[sortingPaths.length] = [true, false];
     //alert(JSON.stringify(sortingArgs));
     
     $("#sortSpan"+sortingPaths.length).append($("<div><select class='sortDropdown' id='sortOpt"+sortingPaths.length+"' ><option selected> --- select option to sort --- </option></select></div>"));
