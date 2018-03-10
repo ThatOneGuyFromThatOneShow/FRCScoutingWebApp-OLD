@@ -248,7 +248,7 @@ function getUI(obj) {
         } else if (elmtId.endsWith("__bool")) {
             obj[$(this).attr("id")] = $(this).prop("checked");
         } else if (elmtId.endsWith("__num")) {
-            obj[$(this).attr("id")] = parseInt($(this).val());
+            obj[$(this).attr("id")] = parseInt($(this).val() || 0);
         } else {
             obj[$(this).attr("id")] = $(this).val();
         }
@@ -264,7 +264,7 @@ function getUI(obj) {
                     if (elmtId.endsWith("__bool")) {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).prop("checked");
                     } else if (elmtId.endsWith("__num")) {
-                        obj[$(this).attr("id")][key][val] = parseInt($("#"+elmtId).val());
+                        obj[$(this).attr("id")][key][val] = parseInt($("#"+elmtId).val() || 0);
                     } else {
                         obj[$(this).attr("id")][key][val] = $("#"+elmtId).val();
                     }
