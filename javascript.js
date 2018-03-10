@@ -17,6 +17,7 @@ function MatchInfo(number) {
     this.Blocks_In_Opponent_Switch__num = 0;
     this.Blocks_In_Portal__num = 0;
     this.endgame__title = "End Game:";
+    this.Parked__bool = false;
     this.Hung__bool = false;
     this.Raised_Others__bool = false;
     this.other_result__title = "Result: ";
