@@ -5,7 +5,9 @@ import sys
 url = str(sys.argv[1])
 url1 = "http://"+url+"/php/getAllTeams.php"
 url2 = "http://"+url+"/php/setTeamInfo.php?q="
+print("Waiting for team data")
 text = requests.get(url1).text
+print("Got team data!")
 
 while text.find(",,") != -1 or text.find("[,") != -1 or text.find(",]") != -1:
     text = text.replace(",,", ",").replace("[,", "[").replace(",]", "]")
@@ -25,7 +27,6 @@ for i in data:
             matchNumber = inc + 1
 
         if j is None:
-            # print("Team {0} match {1} is null".format(teamNumber, matchNumber))
             indexesToRemove.insert(0, inc)
 
         inc += 1
@@ -40,5 +41,6 @@ for i in data:
         inc += 1
 
     sendData = json.dumps(i).replace("null", "0")
+    print(i["Number"])
 
     requests.post(url2+teamNumber, data={'data': sendData})

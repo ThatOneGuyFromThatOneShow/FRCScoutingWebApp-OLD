@@ -13,6 +13,10 @@
             <div style="margin-bottom: 15px;">
                 <input id="refreshUI" type="button" value="Refresh UI" onclick="getTeamInfo()" placeholder="Team Number">
                 <input id="submitButton" type="button" value="Submit" onclick="setAllTeamInfo()">
+                <span id="autoRefreshText">
+                    Automatic Refresh:
+                    <input id="autoRefresh" type=checkbox onchange="updateAutoRefresh()" checked>
+                </span>
             </div>
             <div id="inputs">
                 <span class="lable teamNumLable">Team Number: </span>

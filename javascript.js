@@ -218,7 +218,8 @@ function setUI(obj, dontRebuildArray) {
                         $("#inputs").append(elmt);
                         if (!key.endsWith("__title")) {
                             $("#"+key).change(function(){
-                                setTeamInfo($(this).attr("id"));
+                                if (autoRefresh)
+                                    setTeamInfo($(this).attr("id"));
                             });
                         }
                     }
@@ -273,6 +274,22 @@ function getUI(obj) {
         }
     });
 }
+function disableUI() {
+    $(".field").each(function(){
+        $(this).prop("disabled", true);
+    });
+    $(".matches").each(function(){
+        $(this).prop("disabled", true);
+    });
+}
+function enableUI() {
+    $(".field").each(function(){
+        $(this).prop("disabled", false);
+    });
+    $(".matches").each(function(){
+        $(this).prop("disabled", false);
+    });
+}
 function deleteUI() {
     $(".aGen").remove();
     $(".autoGen").remove();
@@ -281,6 +298,7 @@ function deleteUI() {
 function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
     var teamNumber = $("#Number").val();
     getUI(team);
+    disableUI();
     $.ajax({
         url : 'php/getTeamInfo.php?q=' + teamNumber,
         type : 'GET',
@@ -306,8 +324,11 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
             url : 'php/setTeamInfo.php?q=' + teamNumber,
             type : 'POST',
             data : {data : JSON.stringify(dataToSend)}
+        }).done(function(){
+            enableUI();
         }).fail(function(){
             alert("An error has occurred!");
+            enableUI();
         })
     }).fail(function(){
         var teamNumber = $("#Number").val();
@@ -320,20 +341,26 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
             data : {data : JSON.stringify(dataToSend)}
         }).fail(function(){
             alert("An error has occurred!");
+            enableUI();
         })
     });
 }
 function setAllTeamInfo() {
+    getUI(team);
     var teamNumber = $("#Number").val();
     var dataToSend = team;
     dataToSend.Number = parseInt(teamNumber);
+    disableUI();
     if (teamNumber != undefined && teamNumber != 0) {
         $.ajax({
             url : 'php/setTeamInfo.php?q=' + teamNumber,
             type : 'POST',
             data : {data : JSON.stringify(dataToSend)}
+        }).done(function(){
+            enableUI();
         }).fail(function(){
             alert("An error has occurred!");
+            enableUI();
         });
     }
 }
@@ -615,10 +642,16 @@ function sortData(arr1, arr2) {
         }
     });
 }
+
+function updateAutoRefresh() {
+    autoRefresh = $("#autoRefresh").prop("checked");
+}
+
 var team = new Team();
 var sortingPaths = [];
 var sortingArgs = [];
 var globalSortedData = [];
+var autoRefresh = true;
 
 function onLoad() {
     createNewSortArgs();
