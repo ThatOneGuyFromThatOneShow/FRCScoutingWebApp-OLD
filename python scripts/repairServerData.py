@@ -38,7 +38,7 @@ for i in data:
 
     inc = 0
     for j in i["Matches__match"]:
-        matchNumber = inc + 
+        matchNumber = inc + 1
         i["Matches__match"][inc]["Match_Number__num"] = matchNumber
         inc += 1
 
