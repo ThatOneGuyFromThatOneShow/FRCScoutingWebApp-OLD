@@ -1,0 +1,256 @@
+body {
+    background-color: darkgray;
+}
+input[type=button] {
+    display: inline-flex;
+    float: left;
+    margin-left: 18px;
+}
+input[type=number] {
+    height: 19px;
+    text-align: center;
+}
+#submitButton {
+    margin-left: 10px;
+}
+.autoGen, #number {
+    display: inline-flex;
+    float: right;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 7px;
+}
+.lable, .matchLable {
+    float: left;
+    clear: left;
+    width: 60%;
+    min-width: 150px;
+    text-align: left;
+    padding-left: 1%;
+    padding-top: 1px;
+    margin-left: 1%;
+    color: white;
+    font-size: 20px;
+}
+.textLable, .numLable, .teamNumLable {
+    width: 30%;
+}
+.title {
+    float: left;
+    clear: left;
+    width: 300px;
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 1px;
+    margin-left: 10px;
+    color: white;
+    font-size: 20px;
+}
+.titleText {
+    margin: 10px;
+    color: #525252;
+}
+.field, .matchField {
+    float: right;
+    width: 67%;
+    min-width: 200px;
+    resize: none;
+    overflow: hidden;
+}
+.field[type='checkbox'], .matchField[type='checkbox'] {
+    float: right;
+    width: 20%;
+    max-width: 100px;
+    min-width: 20px;
+    margin-top: 6px;
+}
+.matches {
+    float: right;
+    min-width: 200px;
+    width: 67%;
+    height: 30px;
+    padding-left: 1%;
+}
+.matchDiv {
+    float: left;
+    clear: left;
+    padding: 1%;
+    padding-left: 0px;
+    border-style: solid;
+    border-color: aqua;
+    border-width: 2px;
+    background-color: lightgray;
+    width: 98%;
+}
+.matchDelete {
+    float: left;
+    margin-left: 2%;
+}
+.matchSubmit {
+    clear: right;
+    float: right;
+    margin-right: 1%;
+}
+.matchCreate {
+    clear: right;
+    float: right;
+}
+.number {
+    text-align: center;
+}
+.container {
+    width: 100%;
+}
+.sortedTeam {
+    margin-top: 20px;
+    border-color: aqua;
+    border-style: solid;
+    border-width: 2px;
+    padding: 1%;
+    background: #c1c1c1;
+}
+.sortedMatch {
+    border-style: solid;
+    border-color: red;
+    border-width: 2px;
+    margin-top: 10px;
+    padding: 3%;
+    margin: 2%;
+    background: #cccccc;
+}
+.sortedMatchNumber {
+    clear: left;
+    margin: 2%;
+    font-size: 30px;
+    color: white;
+}
+.sortedTitle {
+    clear: left;
+    margin-left: 5%;
+    color: #525252;
+}
+.sortedLable {
+    float: left;
+    clear: left;
+    width: 40%;
+    min-width: 150px;
+    text-align: left;
+    padding-left: 1%;
+    padding-top: 1px;
+    margin-left: 1%;
+    color: white;
+    font-size: 20px;
+}
+.sortedField {
+    margin-top: 6px;
+    float: right;
+    width: 55%;
+    margin-right: 10px;
+    text-align: right;
+    margin-right: 10px;
+}
+.sortedTeamNumber {
+    text-align: center;
+}
+.sortedMatchTitle {
+    text-align: center;
+}
+.sortDropdown {
+    width: 100%;
+    margin-top: 6px;
+    height: 25px;
+    text-align: center;
+}
+.displayMatchDropdown {
+    width: 50%;
+    float: right;
+    clear: left;
+    margin-top: 6px;
+    height: 25px;
+    text-align: center;
+    margin-right: 2%;
+}
+.dropdownDiv {
+    display: inline-table;
+    padding: 0.5%;
+    width: 32.3%;
+}
+
+
+#table {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+#teamInfo {
+    background-color: #b4b3b3;
+    display: inline-block;
+    border-color: aqua;
+    border-width: 2px;
+    border-style: solid;
+    padding: 1%;
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    margin-bottom: 10px;
+    max-width: 800px;
+}
+@media screen and (max-width: 600px) {
+    #number {
+        min-width: 0%;
+        width: 98.5%;
+    }
+    .field {
+        float: right;
+        width: 98.5%;
+    }
+    .matchField {
+        width: 97.5%;
+    }
+    .matchField[type=number] {
+        width: 98%;
+    }
+    .field[type='checkbox'] , .matchField[type='checkbox'] {
+        float: right;
+        width: 20%;
+        max-width: 100px;
+        min-width: 20px;
+        margin-top: 6px;
+    }
+    .lable, .matchLable {
+        width: 70%;
+        min-width: 200px;
+        padding-left: 0px;
+        padding-top: 1px;
+        margin-left: 0px;
+        color: white;
+        font-size: 20px;
+    }
+    .matchLable {
+        margin-left: 1%;
+    }
+    .matchLable.textLable, .matchLable.numLable {
+        width: 99%;
+    }
+    .title {
+        float: left;
+        clear: left;
+        width: 70%;
+        text-align: left;
+        padding-left: 1%;
+        padding-top: 1px;
+        margin-left: 1%;
+        color: white;
+        font-size: 20px;
+    }
+    .matches {
+        width: 99%;
+    }
+    .dropdownDiv {
+    display: inline-block;
+    padding: 0.5%;
+    width: 99%;
+    }
+}

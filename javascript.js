@@ -298,6 +298,7 @@ function deleteUI() {
 function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
     var teamNumber = $("#Number").val();
     getUI(team);
+    if (JSON.stringify(team) == JSON.stringify(new Team())) return;
     disableUI();
     $.ajax({
         url : 'php/getTeamInfo.php?q=' + teamNumber,
@@ -342,11 +343,14 @@ function setTeamInfo(valChanged, valChangedInArray, matchValChanged) {
         }).fail(function(){
             alert("An error has occurred!");
             enableUI();
+        }).done(function(){
+            enableUI();
         })
     });
 }
 function setAllTeamInfo() {
     getUI(team);
+    if (JSON.stringify(team) == JSON.stringify(new Team(team.Number))) return;
     var teamNumber = $("#Number").val();
     var dataToSend = team;
     dataToSend.Number = parseInt(teamNumber);
